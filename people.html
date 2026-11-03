@@ -2703,7 +2703,6 @@ $('auditAll').onclick=()=>{
  // HR onboarding remains a separate scenario; never merge by employee/account number.
  const originalCard=document.querySelector('main>.directory-card');
  const hrCard=node('section','','directory-card hr-onboard-directory');hrCard.id='hrOnboardingDirectory';hrCard.hidden=true;originalCard.after(hrCard);
- const listToggle=button('HR 開通示意',()=>showHrDirectory());listToggle.className='data-view-toggle';originalCard.querySelector('.directory-heading>span').append(listToggle);
  const detail=document.createElement('dialog');detail.id='hrOnboardingDetail';document.body.append(detail);
  let hrQuery='',hrSystem='',showHr=false;
  const systemTitles={HR:'HR 人力資源',WMS:'WMS 倉儲工作台',ADMIN:'行政／採購與會計'};
@@ -2717,23 +2716,23 @@ $('auditAll').onclick=()=>{
   const actions=node('div','','hr-detail-actions');actions.append(button('關閉',()=>detail.close()));detail.append(actions);detail.showModal();
  }
  function showHrDirectory(){
-  if(!accountDemoMode){window.alert('請先切換為示意資料，再查看 HR 開通示意。');return}
+  if(!accountDemoMode)return;
   showHr=true;originalCard.hidden=true;hrCard.hidden=false;hrCard.replaceChildren();
-  const head=node('div','','directory-heading');const title=node('h2','帳號清單 · HR 開通示意');head.append(title,button('查看原有帳號示意',()=>{showHr=false;hrCard.hidden=true;originalCard.hidden=false}));hrCard.append(head);
-  hrCard.append(node('p','HR 開通示意與原有四筆帳號為不同示意資料，分開檢視；不會覆蓋原有帳號或產生可登入帳號。','help'));
-  const tools=node('div','','toolbar'),query=node('input'),system=node('select');query.placeholder='搜尋姓名、帳號或部門';query.setAttribute('aria-label','搜尋已開通 HR 示意帳號');query.value=hrQuery;system.setAttribute('aria-label','篩選開放系統');for(const [v,label] of [['','全部系統'],...Object.entries(systemTitles)]){const o=node('option',label);o.value=v;system.append(o)}system.value=hrSystem;tools.append(query,system);hrCard.append(tools);
+  const head=node('div','','directory-heading');const title=node('h2','帳號清單');head.append(title,node('span','目標規畫・示意資料（此瀏覽器保存）'));hrCard.append(head);
+  hrCard.append(node('p','開通後的帳號顯示於此；正式 HR 人員與登入憑證尚待 API 串接。','help'));
+  const tools=node('div','','toolbar'),query=node('input'),system=node('select');query.placeholder='搜尋姓名、帳號或部門';query.setAttribute('aria-label','搜尋已開通帳號');query.value=hrQuery;system.setAttribute('aria-label','篩選開放系統');for(const [v,label] of [['','全部系統'],...Object.entries(systemTitles)]){const o=node('option',label);o.value=v;system.append(o)}system.value=hrSystem;tools.append(query,system);hrCard.append(tools);
   const count=node('p','','help'),wrap=node('div','','table');hrCard.append(count,wrap);
   function drawRows(){
-   wrap.replaceChildren();if(!readRecords()){count.textContent='無法讀取 HR 開通示意紀錄，原儲存內容未更動。';return}
+   wrap.replaceChildren();if(!readRecords()){count.textContent='無法讀取開通紀錄，原儲存內容未更動。';return}
    const all=latestOpened();const rows=all.filter(r=>{const p=personInfo(r);return [r.name,r.account,p.department,p.job].join(' ').toLowerCase().includes(hrQuery.trim().toLowerCase())&&(!hrSystem||r.systems.includes(hrSystem))});count.textContent='已開通 '+all.length+' 筆 · 符合 '+rows.length+' 筆';
    const table=node('table'),thead=node('thead'),tr=node('tr');for(const h of ['登入帳號','使用人員','部門／職位','開通狀態','登入方式','開放系統','操作'])tr.append(node('th',h));thead.append(tr);table.append(thead);const tbody=node('tbody');
    for(const r of rows){const p=personInfo(r),row=node('tr'),person=node('td'),dept=node('td'),state=node('td'),systems=node('td');person.append(node('strong',r.name));dept.append(node('div',p.department),node('small',p.job));state.append(node('span','已開通（示意）','badge'));for(const v of r.systems)systems.append(node('span',systemTitles[v]||v,'badge'));const operation=node('td');operation.append(button('開通明細',()=>showDetails(r)));row.append(node('td',r.account),person,dept,state,node('td',r.methods.map(v=>methodTitles[v]||v).join('、')),systems,operation);tbody.append(row)}
-   if(!rows.length){const row=node('tr'),cell=node('td',all.length?'沒有符合條件的帳號。':'尚無 HR 示意開通紀錄，請由上方「開通帳號」開始。');cell.colSpan=7;row.append(cell);tbody.append(row)}table.append(tbody);wrap.append(table);
+   if(!rows.length){const row=node('tr'),cell=node('td',all.length?'沒有符合條件的帳號。':'尚無開通紀錄，請由上方「開通帳號」開始。');cell.colSpan=7;row.append(cell);tbody.append(row)}table.append(tbody);wrap.append(table);
   }
   query.oninput=()=>{hrQuery=query.value;drawRows()};system.onchange=()=>{hrSystem=system.value;drawRows()};drawRows();
  }
  const originalAudit=$('auditAll').onclick;
- $('auditAll').onclick=function(e){if(!showHr)return originalAudit?.call(this,e);detail.replaceChildren();detail.append(node('h2','HR 開通異動紀錄（示意）'));if(!readRecords()){detail.append(node('p','無法讀取紀錄，原資料未更動。'))}else{const rows=[...records].sort((a,b)=>Date.parse(b.at)-Date.parse(a.at));for(const r of rows){const box=node('div','','hr-event');box.append(node('p',new Date(r.at).toLocaleString('zh-TW',{hour12:false})+' · '+(r.actor||'未記錄操作者')+' → '+r.name+'（'+r.account+'）'),node('p','未開通 → 已開通（示意）；開放系統：'+r.systems.map(v=>systemTitles[v]||v).join('、')),button('查看明細',()=>{detail.close();showDetails(r)}));detail.append(box)}if(!rows.length)detail.append(node('p','尚無開通異動紀錄。'))}detail.append(button('關閉',()=>detail.close()));detail.showModal()};
+ $('auditAll').onclick=function(e){if(!showHr)return originalAudit?.call(this,e);detail.replaceChildren();detail.append(node('h2','帳號開通異動紀錄（示意）'));if(!readRecords()){detail.append(node('p','無法讀取紀錄，原資料未更動。'))}else{const rows=[...records].sort((a,b)=>Date.parse(b.at)-Date.parse(a.at));for(const r of rows){const box=node('div','','hr-event');box.append(node('p',new Date(r.at).toLocaleString('zh-TW',{hour12:false})+' · '+(r.actor||'未記錄操作者')+' → '+r.name+'（'+r.account+'）'),node('p','未開通 → 已開通（示意）；開放系統：'+r.systems.map(v=>systemTitles[v]||v).join('、')),button('查看明細',()=>{detail.close();showDetails(r)}));detail.append(box)}if(!rows.length)detail.append(node('p','尚無開通異動紀錄。'))}detail.append(button('關閉',()=>detail.close()));detail.showModal()};
 
  function draw(){
  d.replaceChildren();const shell=node('div','','ob-shell'),head=node('div','','ob-head');head.append(node('h2','開通帳號'),button('關閉',()=>d.close()));shell.append(head,node('p','目標規畫・獨立示意情境，HR 人員 API 尚待串接；不影響既有帳號。'));
@@ -2743,7 +2742,7 @@ $('auditAll').onclick=()=>{
  const tools=node('div','','ob-tools'),search=node('input'),dept=node('select');search.placeholder='搜尋姓名、員工編號或職位';search.setAttribute('aria-label','搜尋 HR 人員');dept.setAttribute('aria-label','部門');for(const v of ['全部部門','企劃']){const o=node('option',v);o.value=v;dept.append(o)}tools.append(search,dept);body.append(tools);const wrap=node('div','','ob-table-wrap');body.append(wrap);
  const next=button('下一步：設定登入與權限',()=>{if(!selectedPerson||isOpened(selectedPerson))return;step=2;draw()},true);
  function list(){wrap.replaceChildren();const table=node('table'),thead=node('thead'),tr=node('tr');for(const t of ['選取','姓名／員工編號','部門／職位','任職狀態','Portal 開通狀態'])tr.append(node('th',t));thead.append(tr);table.append(thead);const tbody=node('tbody');const found=source.filter(p=>[p.name,p.employee,p.department,p.job].join(' ').toLowerCase().includes(search.value.trim().toLowerCase())&&(dept.value==='全部部門'||dept.value===p.department));for(const p of found){const row=node('tr'),pick=node('td'),radio=node('input');radio.type='radio';radio.name='hr-demo-person';radio.disabled=isOpened(p);radio.checked=selectedPerson?.id===p.id;radio.setAttribute('aria-label','選取 '+p.name);radio.onchange=()=>{selectedPerson=p;next.disabled=false;secondStep.disabled=false;selection.textContent='已選取：'+p.name+'（'+p.employee+'）'};row.onclick=e=>{if(radio.disabled||e.target===radio)return;radio.checked=true;radio.onchange()};row.style.cursor=radio.disabled?'default':'pointer';pick.append(radio);const who=node('td'),job=node('td');who.append(node('strong',p.name),node('small',p.employee));job.append(node('div',p.department),node('small',p.job));row.append(pick,who,job,node('td','在職'),node('td',isOpened(p)?'已開通（示意）':'未開通（示意）'));tbody.append(row)}if(!found.length){const row=node('tr'),td=node('td','沒有符合條件的人員');td.colSpan=5;row.append(td);tbody.append(row)}table.append(tbody);wrap.append(table)}
- const selection=node('span',selectedPerson?'已選取：'+selectedPerson.name+'（'+selectedPerson.employee+'）':'請選取人員');next.disabled=!selectedPerson||isOpened(selectedPerson);foot.append(selection,button('取消',()=>d.close()),next);search.oninput=dept.onchange=list;list();body.append(node('p',isOpened(source[1])?'KEN 已完成示意開通，可至「帳號清單 · HR 開通示意」查看結果。':'KEN 尚未開通為示意情境；已開通者不可重複開通。'));if(records.length)foot.append(button('查看已開通帳號',()=>{d.close();showHrDirectory()}));
+ const selection=node('span',selectedPerson?'已選取：'+selectedPerson.name+'（'+selectedPerson.employee+'）':'請選取人員');next.disabled=!selectedPerson||isOpened(selectedPerson);foot.append(selection,button('取消',()=>d.close()),next);search.oninput=dept.onchange=list;list();body.append(node('p',isOpened(source[1])?'KEN 已完成示意開通，可至「帳號清單」查看結果。':'KEN 尚未開通為示意情境；已開通者不可重複開通。'));if(records.length)foot.append(button('查看已開通帳號',()=>{d.close();showHrDirectory()}));
  }else{
  const p=selectedPerson;const identity=node('div','','ob-panel');identity.append(node('h3',p.name+'（'+p.employee+'）'),node('p','公司：ABOMB　部門：'+p.department+'　職位：'+p.job+'　任職狀態：在職'),node('small','人事資料僅供檢視；永久人員識別碼與配發關係待 HR API 提供。'));body.append(identity);
  const cols=node('div','','ob-columns'),login=node('div','','ob-panel'),rights=node('div','','ob-panel');cols.append(login,rights);body.append(cols);login.append(node('h3','登入設定'));const account=node('input');account.value=p.employee;account.readOnly=true;const al=node('label','登入帳號');al.append(account);login.append(al,node('small','以員工編號作為登入帳號示意；配發期間固定。'));
@@ -2751,11 +2750,11 @@ $('auditAll').onclick=()=>{
  rights.append(node('h3','開放系統'));for(const [v,t] of [['HR','HR 人力資源'],['WMS','WMS 倉儲工作台'],['ADMIN','行政／採購與會計']]){const row=node('div','','ob-system'),l=node('label'),c=node('input');c.type='checkbox';c.checked=draft.systems.includes(v);c.onchange=()=>{draft.systems=c.checked?[...draft.systems,v]:draft.systems.filter(x=>x!==v)};l.append(c,document.createTextNode(' '+t));row.append(l);rights.append(row)}
  rights.append(node('p','此處僅設定可進入的系統。各系統的功能權限、簽核及資料範圍，請由所屬系統的授權管理者設定；開放系統不代表取得全部功能權限。'));
  const reason=node('textarea');reason.rows=2;reason.value=draft.reason;reason.oninput=()=>draft.reason=reason.value;const rl=node('label','開通原因（必填）');rl.append(reason);body.append(rl);const error=node('p','','ob-error');error.setAttribute('role','alert');body.append(error);
- foot.append(button('上一步',()=>{step=1;draw()}),button('取消',()=>d.close()),button('儲存示意開通',()=>{if(!authorized()){error.textContent='管理權限已失效。';return}if(!draft.methods.length||!draft.systems.length||!draft.reason.trim()){error.textContent='請選擇登入方式、開放系統並填寫開通原因。';return}if(!readRecords()){error.textContent='無法讀取既有示意資料，已停止儲存以避免覆蓋。';return}if(isOpened(p)){error.textContent='此人員已完成示意開通，請勿重複操作。';return}const event={personId:p.id,name:p.name,account:p.employee,department:p.department,job:p.job,systems:[...draft.systems],methods:[...draft.methods],reason:draft.reason.trim(),at:new Date().toISOString(),actorId:currentOperator.id,actor:currentOperator.name,isDemo:true};try{localStorage.setItem(storageKey,JSON.stringify([...records,event]));records.push(event);showHrDirectory();body.replaceChildren(node('h3','示意開通已儲存'),node('p',p.name+'（'+p.employee+'）的示意設定已保存於此瀏覽器。'),node('p','按「完成並查看帳號清單」即可查看本次開通結果。原有帳號示意資料保留於另一份清單；正式開通及跨系統紀錄待 API 串接。'));foot.replaceChildren(button('返回選取人員',()=>{step=1;selectedPerson=null;draw()}),button('完成並查看帳號清單',()=>{d.close();showHrDirectory()},true))}catch{error.textContent='儲存失敗，請檢查瀏覽器儲存空間。'}},true));
+ foot.append(button('上一步',()=>{step=1;draw()}),button('取消',()=>d.close()),button('儲存示意開通',()=>{if(!authorized()){error.textContent='管理權限已失效。';return}if(!draft.methods.length||!draft.systems.length||!draft.reason.trim()){error.textContent='請選擇登入方式、開放系統並填寫開通原因。';return}if(!readRecords()){error.textContent='無法讀取既有示意資料，已停止儲存以避免覆蓋。';return}if(isOpened(p)){error.textContent='此人員已完成示意開通，請勿重複操作。';return}const event={personId:p.id,name:p.name,account:p.employee,department:p.department,job:p.job,systems:[...draft.systems],methods:[...draft.methods],reason:draft.reason.trim(),at:new Date().toISOString(),actorId:currentOperator.id,actor:currentOperator.name,isDemo:true};try{localStorage.setItem(storageKey,JSON.stringify([...records,event]));records.push(event);showHrDirectory();body.replaceChildren(node('h3','示意開通已儲存'),node('p',p.name+'（'+p.employee+'）的示意設定已保存於此瀏覽器。'),node('p','帳號已顯示在帳號清單。此為示意開通，不產生可登入帳號；正式開通與跨系統紀錄待 API 串接。'));foot.replaceChildren(button('返回選取人員',()=>{step=1;selectedPerson=null;draw()}),button('完成',()=>{d.close();showHrDirectory()},true))}catch{error.textContent='儲存失敗，請檢查瀏覽器儲存空間。'}},true));
  }
  }
  $('add').onclick=()=>{if(!authorized())return;if(!accountDemoMode){$('hrAccountInfo').showModal();return}step=1;selectedPerson=null;draft={systems:['WMS'],methods:['MANUAL'],reason:''};if(!readRecords()){window.alert('無法讀取示意開通資料，請先檢查瀏覽器儲存。');return}draw();d.showModal()};
- if(readRecords()&&records.length)showHrDirectory();
+ showHrDirectory();
  window.addEventListener('storage',e=>{if(e.key===storageKey&&showHr)showHrDirectory()});
  d.addEventListener('close',()=>{selectedPerson=null;draft={systems:[],methods:[],reason:''};d.replaceChildren()});
 })();
@@ -2839,6 +2838,7 @@ $('auditAll').onclick=()=>{
 @media(max-width:600px){#hrOnboardingDetail dl{grid-template-columns:1fr;gap:6px}#hrOnboardingDetail dd{margin-bottom:12px}}
 </style>
 </body></html>
+
 
 
 
