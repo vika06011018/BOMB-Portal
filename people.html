@@ -2749,4 +2749,40 @@ $('auditAll').onclick=()=>{
 #portalOnboarding .ob-footer>button.ob-primary:hover:not(:disabled){background:#f7ca79!important;border-color:#f7ca79!important;color:#171717!important}
 #portalOnboarding .ob-footer>button.ob-primary:disabled{opacity:.45;cursor:not-allowed}
 </style>
+
+<style id="onboarding-compact-layout">
+#portalOnboarding{height:min(860px,94dvh);overflow:hidden}
+#portalOnboarding .ob-shell{padding:22px 26px;overflow:hidden}
+#portalOnboarding .ob-head,#portalOnboarding .ob-steps,#portalOnboarding .ob-footer,#portalOnboarding .ob-shell>p{flex-shrink:0}
+#portalOnboarding h2{font-size:24px;line-height:1.3}
+#portalOnboarding .ob-shell>p{margin:8px 0 0;font-size:13px;line-height:1.6}
+#portalOnboarding .ob-steps{margin:14px 0}
+#portalOnboarding .ob-body{padding-right:6px;scrollbar-gutter:stable}
+#portalOnboarding .ob-panel{padding:16px;margin-bottom:14px}
+#portalOnboarding .ob-panel h3{margin:0 0 12px;font-size:19px;line-height:1.4}
+#portalOnboarding .ob-panel p{margin:8px 0;line-height:1.7;font-size:13px}
+#portalOnboarding .ob-panel small{margin-top:6px;font-size:12px;line-height:1.6}
+#portalOnboarding .ob-panel h4{margin:16px 0 8px;font-size:15px;line-height:1.5}
+#portalOnboarding .ob-panel label{margin:8px 0;font-size:14px;line-height:1.5}
+#portalOnboarding .ob-panel label>input:not([type=checkbox]):not([type=radio]){display:block;margin-top:7px;padding:10px 12px}
+#portalOnboarding .ob-columns{gap:16px}
+#portalOnboarding .ob-inline{gap:14px}
+#portalOnboarding .ob-inline label{margin:0;min-height:28px}
+#portalOnboarding .ob-system{margin:8px 0}
+#portalOnboarding .ob-system>label{margin:0;min-height:50px;padding:12px 14px}
+#portalOnboarding .ob-body>label{display:flex;flex-direction:column;align-items:stretch;gap:9px;margin:0 0 8px;font-size:14px;line-height:1.5}
+#portalOnboarding .ob-body>label>textarea{display:block;min-height:76px;margin:0;padding:11px 12px;line-height:1.5;resize:vertical}
+#portalOnboarding .ob-error{margin:8px 0;font-size:13px}
+#portalOnboarding .ob-error:empty{display:none}
+#portalOnboarding .ob-footer{padding-top:14px;margin-top:14px;min-height:60px}
+@media(max-width:700px){
+#portalOnboarding .ob-shell{padding:18px}
+#portalOnboarding .ob-columns{grid-template-columns:1fr}
+#portalOnboarding .ob-shell .ob-steps>button{font-size:14px!important;padding:12px 8px!important}
+#portalOnboarding .ob-footer{gap:8px}
+#portalOnboarding .ob-footer>button{padding:10px 12px}
+#portalOnboarding .ob-footer>button.ob-primary{min-width:130px}
+}
+</style>
 </body></html>
+
