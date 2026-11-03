@@ -2693,7 +2693,7 @@ $('auditAll').onclick=()=>{
  const d=document.createElement('dialog');d.id='portalOnboarding';document.body.append(d);
  const storageKey='bomb-portal-hr-onboarding-demo-v1:'+encodeURIComponent(currentOperator.company);
  const source=[{id:'hr-scenario-og',name:'OG',employee:'AB00001',department:'企劃',job:'企劃－經理辦公室',opened:true},{id:'hr-scenario-ken',name:'KEN',employee:'AB00002',department:'企劃',job:'技術企劃',opened:false}];
- let selectedPerson=null,step=1,records=[],draft={systems:['WMS'],permissions:[],methods:['MANUAL'],reason:''};
+ let selectedPerson=null,step=1,records=[],draft={systems:['WMS'],methods:['MANUAL'],reason:''};
  function readRecords(){try{const v=JSON.parse(localStorage.getItem(storageKey)||'[]');if(!Array.isArray(v))throw Error();records=v;return true}catch{records=[];return false}}
  function isOpened(p){return p.opened||records.some(r=>r.personId===p.id)}
  function node(tag,text,cls){const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;return n}
@@ -2705,21 +2705,21 @@ $('auditAll').onclick=()=>{
  if(step===1){
  body.append(node('p','姓名、員工編號、部門與職位依提供的 HR 畫面呈現；開通狀態為展示情境。'));
  const tools=node('div','','ob-tools'),search=node('input'),dept=node('select');search.placeholder='搜尋姓名、員工編號或職位';search.setAttribute('aria-label','搜尋 HR 人員');dept.setAttribute('aria-label','部門');for(const v of ['全部部門','企劃']){const o=node('option',v);o.value=v;dept.append(o)}tools.append(search,dept);body.append(tools);const wrap=node('div','','ob-table-wrap');body.append(wrap);
- const next=button('下一步：設定權限',()=>{if(!selectedPerson||isOpened(selectedPerson))return;step=2;draw()},true);
+ const next=button('下一步：設定登入與權限',()=>{if(!selectedPerson||isOpened(selectedPerson))return;step=2;draw()},true);
  function list(){wrap.replaceChildren();const table=node('table'),thead=node('thead'),tr=node('tr');for(const t of ['選取','姓名／員工編號','部門／職位','任職狀態','Portal 開通狀態'])tr.append(node('th',t));thead.append(tr);table.append(thead);const tbody=node('tbody');const found=source.filter(p=>[p.name,p.employee,p.department,p.job].join(' ').toLowerCase().includes(search.value.trim().toLowerCase())&&(dept.value==='全部部門'||dept.value===p.department));for(const p of found){const row=node('tr'),pick=node('td'),radio=node('input');radio.type='radio';radio.name='hr-demo-person';radio.disabled=isOpened(p);radio.checked=selectedPerson?.id===p.id;radio.setAttribute('aria-label','選取 '+p.name);radio.onchange=()=>{selectedPerson=p;next.disabled=false;secondStep.disabled=false;selection.textContent='已選取：'+p.name+'（'+p.employee+'）'};row.onclick=e=>{if(radio.disabled||e.target===radio)return;radio.checked=true;radio.onchange()};row.style.cursor=radio.disabled?'default':'pointer';pick.append(radio);const who=node('td'),job=node('td');who.append(node('strong',p.name),node('small',p.employee));job.append(node('div',p.department),node('small',p.job));row.append(pick,who,job,node('td','在職'),node('td',isOpened(p)?'已開通（示意）':'未開通（示意）'));tbody.append(row)}if(!found.length){const row=node('tr'),td=node('td','沒有符合條件的人員');td.colSpan=5;row.append(td);tbody.append(row)}table.append(tbody);wrap.append(table)}
  const selection=node('span',selectedPerson?'已選取：'+selectedPerson.name+'（'+selectedPerson.employee+'）':'請選取人員');next.disabled=!selectedPerson||isOpened(selectedPerson);foot.append(selection,button('取消',()=>d.close()),next);search.oninput=dept.onchange=list;list();body.append(node('p','本圖以 KEN 尚未開通為示意情境。已開通者不可重複開通；正式版應導向其既有帳號設定。'));
  }else{
  const p=selectedPerson;const identity=node('div','','ob-panel');identity.append(node('h3',p.name+'（'+p.employee+'）'),node('p','公司：ABOMB　部門：'+p.department+'　職位：'+p.job+'　任職狀態：在職'),node('small','人事資料僅供檢視；永久人員識別碼與配發關係待 HR API 提供。'));body.append(identity);
  const cols=node('div','','ob-columns'),login=node('div','','ob-panel'),rights=node('div','','ob-panel');cols.append(login,rights);body.append(cols);login.append(node('h3','登入設定'));const account=node('input');account.value=p.employee;account.readOnly=true;const al=node('label','登入帳號');al.append(account);login.append(al,node('small','以員工編號作為登入帳號示意；配發期間固定。'));
  const methods=node('div','','ob-inline');for(const [v,t] of [['MANUAL','帳號密碼'],['NFC','NFC'],['QR','QR']]){const l=node('label'),c=node('input');c.type='checkbox';c.checked=draft.methods.includes(v);c.onchange=()=>{draft.methods=c.checked?[...draft.methods,v]:draft.methods.filter(x=>x!==v)};l.append(c,document.createTextNode(t));methods.append(l)}login.append(node('h4','登入方式'),methods,node('small','此流程僅展示登入方式設定，不產生有效密碼、NFC 或 QR 憑證。正式版須串接憑證設定與核驗流程。'));
- rights.append(node('h3','系統與功能權限'));for(const [v,t] of [['HR','HR 人力資源'],['WMS','WMS 倉儲工作台'],['ADMIN','行政／採購與會計']]){const row=node('div','','ob-system'),l=node('label'),c=node('input');c.type='checkbox';c.checked=draft.systems.includes(v);c.onchange=()=>{draft.systems=c.checked?[...draft.systems,v]:draft.systems.filter(x=>x!==v);perms.hidden=!draft.systems.includes('WMS')};l.append(c,document.createTextNode(' '+t));row.append(l);rights.append(row)}
- const perms=node('details');perms.append(node('summary','設定 WMS 功能權限'));perms.hidden=!draft.systems.includes('WMS');for(const [v,t] of Object.entries(labels)){const l=node('label'),c=node('input');c.type='checkbox';c.checked=draft.permissions.includes(v);c.onchange=()=>{draft.permissions=c.checked?[...draft.permissions,v]:draft.permissions.filter(x=>x!==v)};l.append(c,document.createTextNode(' '+t));perms.append(l)}rights.append(perms,node('small','職位不直接等於授權。HR 與行政的細部功能權限待對應系統提供。'));
+ rights.append(node('h3','開放系統'));for(const [v,t] of [['HR','HR 人力資源'],['WMS','WMS 倉儲工作台'],['ADMIN','行政／採購與會計']]){const row=node('div','','ob-system'),l=node('label'),c=node('input');c.type='checkbox';c.checked=draft.systems.includes(v);c.onchange=()=>{draft.systems=c.checked?[...draft.systems,v]:draft.systems.filter(x=>x!==v)};l.append(c,document.createTextNode(' '+t));row.append(l);rights.append(row)}
+ rights.append(node('p','此處僅設定可進入的系統。各系統的功能權限、簽核及資料範圍，請由所屬系統的授權管理者設定；開放系統不代表取得全部功能權限。'));
  const reason=node('textarea');reason.rows=2;reason.value=draft.reason;reason.oninput=()=>draft.reason=reason.value;const rl=node('label','開通原因（必填）');rl.append(reason);body.append(rl);const error=node('p','','ob-error');error.setAttribute('role','alert');body.append(error);
- foot.append(button('上一步',()=>{step=1;draw()}),button('取消',()=>d.close()),button('儲存示意開通',()=>{if(!authorized()){error.textContent='管理權限已失效。';return}if(!draft.methods.length||!draft.systems.length||!draft.reason.trim()){error.textContent='請選擇登入方式、開放系統並填寫開通原因。';return}if(draft.systems.includes('WMS')&&!draft.permissions.length){error.textContent='請展開 WMS 功能權限，至少選擇一項。';perms.open=true;return}if(!readRecords()){error.textContent='無法讀取既有示意資料，已停止儲存以避免覆蓋。';return}if(isOpened(p)){error.textContent='此人員已完成示意開通，請勿重複操作。';return}const event={personId:p.id,name:p.name,account:p.employee,systems:[...draft.systems],permissions:draft.systems.includes('WMS')?[...draft.permissions]:[],methods:[...draft.methods],reason:draft.reason.trim(),at:new Date().toISOString(),actorId:currentOperator.id,actor:currentOperator.name,isDemo:true};try{localStorage.setItem(storageKey,JSON.stringify([...records,event]));records.push(event);body.replaceChildren(node('h3','示意開通已儲存'),node('p',p.name+'（'+p.employee+'）的示意設定已保存於此瀏覽器。'),node('p','此資料與原帳號清單分開，不會建立可登入帳號，也不會覆蓋林班長等既有示意資料。正式開通及統一異動紀錄須待 API 串接。'));foot.replaceChildren(button('返回選取人員',()=>{step=1;selectedPerson=null;draw()}),button('完成',()=>d.close(),true))}catch{error.textContent='儲存失敗，請檢查瀏覽器儲存空間。'}},true));
+ foot.append(button('上一步',()=>{step=1;draw()}),button('取消',()=>d.close()),button('儲存示意開通',()=>{if(!authorized()){error.textContent='管理權限已失效。';return}if(!draft.methods.length||!draft.systems.length||!draft.reason.trim()){error.textContent='請選擇登入方式、開放系統並填寫開通原因。';return}if(!readRecords()){error.textContent='無法讀取既有示意資料，已停止儲存以避免覆蓋。';return}if(isOpened(p)){error.textContent='此人員已完成示意開通，請勿重複操作。';return}const event={personId:p.id,name:p.name,account:p.employee,systems:[...draft.systems],methods:[...draft.methods],reason:draft.reason.trim(),at:new Date().toISOString(),actorId:currentOperator.id,actor:currentOperator.name,isDemo:true};try{localStorage.setItem(storageKey,JSON.stringify([...records,event]));records.push(event);body.replaceChildren(node('h3','示意開通已儲存'),node('p',p.name+'（'+p.employee+'）的示意設定已保存於此瀏覽器。'),node('p','此資料與原帳號清單分開，不會建立可登入帳號，也不會覆蓋林班長等既有示意資料。正式開通及統一異動紀錄須待 API 串接。'));foot.replaceChildren(button('返回選取人員',()=>{step=1;selectedPerson=null;draw()}),button('完成',()=>d.close(),true))}catch{error.textContent='儲存失敗，請檢查瀏覽器儲存空間。'}},true));
  }
  }
- $('add').onclick=()=>{if(!authorized())return;if(!accountDemoMode){$('hrAccountInfo').showModal();return}step=1;selectedPerson=null;draft={systems:['WMS'],permissions:[],methods:['MANUAL'],reason:''};if(!readRecords()){window.alert('無法讀取示意開通資料，請先檢查瀏覽器儲存。');return}draw();d.showModal()};
- d.addEventListener('close',()=>{selectedPerson=null;draft={systems:[],permissions:[],methods:[],reason:''};d.replaceChildren()});
+ $('add').onclick=()=>{if(!authorized())return;if(!accountDemoMode){$('hrAccountInfo').showModal();return}step=1;selectedPerson=null;draft={systems:['WMS'],methods:['MANUAL'],reason:''};if(!readRecords()){window.alert('無法讀取示意開通資料，請先檢查瀏覽器儲存。');return}draw();d.showModal()};
+ d.addEventListener('close',()=>{selectedPerson=null;draft={systems:[],methods:[],reason:''};d.replaceChildren()});
 })();
 </script>
 <style id="onboarding-layout-fix">
@@ -2737,7 +2737,16 @@ $('auditAll').onclick=()=>{
 #portalOnboarding input[type=radio]:checked{border-color:#edba60!important;background:radial-gradient(circle,#edba60 0 4px,transparent 5px)!important}
 #portalOnboarding input[type=radio]:disabled{border-color:#686868!important;background:#353535!important;cursor:not-allowed!important}
 #portalOnboarding input[type=radio]:focus-visible,#portalOnboarding input[type=checkbox]:focus-visible{outline:2px solid #edba60!important;outline-offset:4px!important;box-shadow:none!important}
-</style></body></html>
-
-
-
+</style>
+<style id="onboarding-entry-scope-layout">
+#portalOnboarding .ob-shell .ob-steps>button{flex:1 1 0!important;min-width:0!important}
+#portalOnboarding .ob-system{padding:0;border:1px solid #454849;border-radius:9px;margin:12px 0;background:#202426}
+#portalOnboarding .ob-system>label{display:flex;align-items:center;gap:12px;width:100%;min-height:58px;margin:0;padding:14px 16px;cursor:pointer;line-height:1.5}
+#portalOnboarding input[type=checkbox]{appearance:auto!important;-webkit-appearance:checkbox!important;display:inline-block!important;flex:0 0 18px!important;border-radius:3px!important}
+#portalOnboarding .ob-inline label{line-height:1.5;min-height:30px}
+#portalOnboarding .ob-system:has(input:checked){border-color:#b28b45;background:#30291c}
+#portalOnboarding .ob-footer>button.ob-primary{background:#edba60!important;background-image:none!important;color:#171717!important;border:1px solid #edba60!important;font-weight:700;min-height:46px;min-width:150px;box-shadow:none}
+#portalOnboarding .ob-footer>button.ob-primary:hover:not(:disabled){background:#f7ca79!important;border-color:#f7ca79!important;color:#171717!important}
+#portalOnboarding .ob-footer>button.ob-primary:disabled{opacity:.45;cursor:not-allowed}
+</style>
+</body></html>
