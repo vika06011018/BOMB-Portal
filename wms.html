@@ -235,6 +235,7 @@ body.wms-unified-nav #nav .nav-group>summary::after {
  transform:rotate(-45deg);
 }
 body.wms-unified-nav #nav .nav-group[open]>summary::after {transform:rotate(45deg)}
+body.wms-unified-nav #nav .nav-group>.nav-group{margin-inline-start:10px;min-width:0}
 
 /* Shared desktop sidebar sizing for the overview and module pages. */
 @media screen and (min-width:601px){
@@ -504,7 +505,7 @@ const role=Workspace.role(currentOperator);
 const homeTitle=({employee:'我的工作',sm:'現場管理工作台',executive:'倉儲管理總覽',admin:'行政倉儲工作台'})[role]||'倉儲工作台';
 const employeeHome=role==='employee';
 const $=id=>document.getElementById(id);
-function displayName(name){return ({'位置與分類':'倉儲架構','標籤與匯入':'識別標籤管理與匯入','申請與提領':'領用管理','歸還與移轉':'入庫管理','庫存查詢':'庫存總覽','盤點作業':'盤點','備品管理':'備品區管理','設備技術資料':'設備管理','我的單據':'單據查詢'}[name]||name);}
+function displayName(name){return ({'位置與分類':'倉儲架構','標籤與匯入':'識別標籤管理與匯入','申請與提領':'領用管理','歸還與移轉':'入庫管理','庫存查詢':'庫存總覽','盤點作業':'盤點','備品管理':'備品區管理','特殊物品分類':'特殊物品管理','設備技術資料':'設備管理','我的單據':'單據查詢'}[name]||name);}
 moduleIcons['建立單據']='request';moduleIcons['我的單據']='clipboard';
 Object.assign(moduleIcons,{'物品管理':'box','進貨管理':'receive','退貨管理':'returns','借出管理':'returns','制服管理':'asset','無線電耳機管理':'asset','特殊物品分類':'box','廠商管理':'asset','設備技術資料':'asset','識別標籤管理':'qr','物品分類管理':'box','報廢管理':'warning','維修管理':'wrench'});
 const navLabels={'位置與分類':'倉別與位置設定','標籤與匯入':'Excel匯入','申請與提領':'領用管理','歸還與移轉':'入庫與位置移轉','庫存查詢':'庫存總覽','盤點作業':'盤點','備品管理':'備品區管理','設備技術資料':'設備管理','我的單據':'單據查詢'};
@@ -572,7 +573,7 @@ document.querySelector('.top>span').textContent=currentOperator.name+' · '+Work
  // Legacy aggregate routes remain addressable; their planning is now represented in the specific modules.
 }
 
-function go(name){if(!Workspace.current()){location.replace('./index.html');return}if(!allowed(name))name='倉儲工作台';if(!Object.hasOwn(modules,name))name='倉儲工作台';document.querySelectorAll('#nav button').forEach(b=>{b.classList.toggle('active',b.dataset.go===name);b.setAttribute('aria-current',b.dataset.go===name?'page':'false')});const selected=document.querySelector('#nav button.active');if(selected&&selected.closest('details'))selected.closest('details').open=true;$('crumb').textContent=name==='倉儲工作台'?homeTitle:displayName(name);let home=name==='倉儲工作台';$('home').style.display=home?(employeeHome?'flex':'block'):'none';$('module').style.display=home?'none':'block';$('title').textContent=displayName(name);$('desc').textContent=descriptions[name]||'依企業權限與管理範圍，處理相關倉儲工作。';$('items').replaceChildren(...modules[name].map(s=>{let e=document.createElement('div');e.textContent=s;return e}));moduleStatusNode.hidden=home;moduleStatusNode.textContent=home?'':'目前狀態：'+(moduleStatus[name]||'尚未實作，目前僅提供下方功能規劃。');history.replaceState(null,'','#'+encodeURIComponent(name));window.scrollTo(0,0)}
+function go(name){if(!Workspace.current()){location.replace('./index.html');return}if(!allowed(name))name='倉儲工作台';if(!Object.hasOwn(modules,name))name='倉儲工作台';document.querySelectorAll('#nav button').forEach(b=>{b.classList.toggle('active',b.dataset.go===name);b.setAttribute('aria-current',b.dataset.go===name?'page':'false')});const selected=document.querySelector('#nav button.active');for(let group=selected?.closest('details');group;group=group.parentElement.closest('details'))group.open=true;$('crumb').textContent=name==='倉儲工作台'?homeTitle:displayName(name);let home=name==='倉儲工作台';$('home').style.display=home?(employeeHome?'flex':'block'):'none';$('module').style.display=home?'none':'block';$('title').textContent=displayName(name);$('desc').textContent=descriptions[name]||'依企業權限與管理範圍，處理相關倉儲工作。';$('items').replaceChildren(...modules[name].map(s=>{let e=document.createElement('div');e.textContent=s;return e}));moduleStatusNode.hidden=home;moduleStatusNode.textContent=home?'':'目前狀態：'+(moduleStatus[name]||'尚未實作，目前僅提供下方功能規劃。');history.replaceState(null,'','#'+encodeURIComponent(name));window.scrollTo(0,0)}
 document.addEventListener('click',e=>{let b=e.target.closest('[data-go]');if(b)go(b.dataset.go)});
 const datasets={'全部據點':[3,2,1,0],'總部':[2,2,1,0],'辦公室':[1,0,0,0]};
 function render(){let a=datasets[$('scope').value];$('stats').innerHTML=['待提領任務','待驗貨案件','待盤點任務','逾期任務'].map((s,i)=>`<div class="stat"><div class="stat-icon stat-icon-${i}">${icon(['box','receive','clipboard','clock'][i])}</div><small>${s}</small><strong>${a[i]}</strong><span>${employeeHome?'個人任務示意':'目前範圍 · 示範'}</span></div>`).join('');let tasks=$('scope').value==='辦公室'?[['設備領用','辦公室 · 待提領','申請與提領']]:[['辦公用品領用','總部 · 等待提領確認','我的任務'],['電子設備到貨驗收','總部 · 待驗貨示意','收貨與驗貨'],['備品區例行盤點','總部 · 待執行','盤點作業']];$('tasks').innerHTML=tasks.filter(t=>allowed(t[2])).map(([a,b,c])=>`<div class="task"><div><strong>${a}</strong><p>${b}</p></div><button class="btn" data-go="${c}">${employeeHome?'查看作業':'查看範圍'}</button></div>`).join('')}
@@ -743,26 +744,36 @@ const groups=[
  ['首頁','倉儲工作台'],
  ['入庫作業',['進貨管理','收貨與驗貨','歸還與移轉']],
  ['出庫作業',['申請與提領','退貨管理']],
- ['庫存查詢','庫存查詢'],
+ ['庫存管理',['庫存查詢',['專項物品',['備品管理','制服管理','無線電耳機管理','特殊物品分類']]]],
  ['識別標籤管理','識別標籤管理'],
  ['盤點作業','盤點作業'],
  ['倉儲架構設定',['位置與分類','物品分類管理','物品管理']],
  ['單據與任務',['我的任務','建立單據','我的單據']],
  ['其他作業',['維修管理']]
 ];
-function appendGroup(label,buttons){
- if(!buttons.length)return;
+function makeGroup(label,entries){
+ if(!entries.length)return null;
  const group=document.createElement('details');
  const summary=document.createElement('summary');
  group.className='nav-group';
  summary.textContent=label;
- group.append(summary,...buttons);
- group.open=buttons.some(button=>button.classList.contains('active'));
- nav.append(group);
+ group.append(summary,...entries);
+ group.open=Boolean(group.querySelector('button.active'));
+ return group;
+}
+function routeButtons(routes){
+ return routes.map(route=>allButtons.find(button=>button.dataset.go===route)).filter(Boolean);
 }
 for(const [label,routes] of groups){
  if(Array.isArray(routes)){
-  appendGroup(label,routes.flatMap(route=>allButtons.filter(button=>button.dataset.go===route)));
+  const entries=routes.flatMap(route=>{
+   if(!Array.isArray(route))return routeButtons([route]);
+   const [childLabel,childRoutes]=route;
+   const child=makeGroup(childLabel,routeButtons(childRoutes));
+   return child?[child]:[];
+  });
+  const group=makeGroup(label,entries);
+  if(group)nav.append(group);
  }else{
   const button=allButtons.find(button=>button.dataset.go===routes);
   if(!button)continue;
@@ -770,7 +781,10 @@ for(const [label,routes] of groups){
   nav.append(button);
  }
 }
-appendGroup('更多功能',allButtons.filter(button=>!nav.contains(button)));
+const stockButton=allButtons.find(button=>button.dataset.go==='庫存查詢');
+if(stockButton)stockButton.querySelector('span').textContent='庫存查詢';
+const more=makeGroup('更多功能',allButtons.filter(button=>!nav.contains(button)));
+if(more)nav.append(more);
 function syncHome(){document.body.classList.toggle('wms-target-home',home.style.display!=='none');}
 new MutationObserver(syncHome).observe(home,{attributes:true,attributeFilter:['style']});syncHome();
 const back=document.querySelector('.return svg');
