@@ -257,7 +257,7 @@ body.wms-unified-nav #nav .nav-group[open]>summary::after {transform:rotate(45de
  body.wms-unified-nav.receipt-view .main{margin-left:0!important}
 }
 
-/* Shared overview and module layout. Receiving keeps its compact workspace. */
+/* Shared overview and module layout. Receiving keeps its compact inner workspace. */
 body.wms-unified-nav{
  --wms-content-width:1440px;
  --wms-card-bg:#292c30;
@@ -265,11 +265,16 @@ body.wms-unified-nav{
  --wms-card-heading:#524733;
 }
 @media screen and (min-width:1301px){
- body.wms-unified-nav:not(.receipt-view,.employee-home) .content{
-  max-width:none;padding:14px 28px 0;
+ html:has(body.wms-unified-nav){scrollbar-gutter:stable}
+ body.wms-unified-nav:not(.employee-home) .content{
+  max-width:none;padding-inline:28px;
  }
+ body.wms-unified-nav:not(.receipt-view,.employee-home) .content{
+  padding-block:14px 0;
+ }
+ body.wms-unified-nav #pickupApp>.panel{max-width:none}
  body.wms-target-home:not(.employee-home) #home,
- body.wms-unified-nav:not(.receipt-view,.employee-home) #module{
+ body.wms-unified-nav:not(.employee-home) #module{
   width:100%;max-width:var(--wms-content-width);margin-inline:auto;
  }
  body.wms-unified-nav:not(.wms-target-home,.receipt-view,.employee-home) .top{
@@ -290,7 +295,7 @@ body.wms-unified-nav{
  body.wms-unified-nav #wmsPlanningReference:not([hidden]){margin-top:10px;padding:10px 18px;border-radius:10px}
  body.wms-unified-nav #wmsPlanningReference>summary{font-size:17px}
 }
-html[data-theme="dark"] body.wms-unified-nav #module :is(.panel,.ss-panel,.sc-panel,.si-stock-panel,.sl-tree-panel,.sl-detail,#siUpperLocation,#wmsPlanningReference){
+html[data-theme="dark"] body.wms-unified-nav #module :is(.panel,.ss-panel,.sc-panel,#smartImport .si-panel,#siReturns .sr-card,#pickupApp .doc-type,.si-stock-panel,.sl-tree-panel,.sl-detail,#siUpperLocation,#wmsPlanningReference){
  background:var(--wms-card-bg)!important;border-color:var(--wms-card-line)!important;box-shadow:none;
 }
 html[data-theme="dark"] body.wms-unified-nav #module .btn:not(:hover,:disabled){
