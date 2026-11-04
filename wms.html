@@ -151,7 +151,7 @@ body.wms-target-home #home .task{min-height:82px;padding:16px 0}
 body.wms-target-home #home .task:first-of-type{margin-top:16px}
 body.wms-target-home #home .task strong,body.wms-target-home #home .item b{font-size:21px}
 body.wms-target-home #home .task p,body.wms-target-home #home .item p{font-size:16px;margin:4px 0 0;line-height:1.5}
-body.wms-target-home #home .task .btn{font-size:18px;font-weight:700;padding:8px 14px;border-color:var(--wg-gold)!important}
+body.wms-target-home #home :is(.task,#suppliesHomeReminder) .btn{font-size:18px;font-weight:700;padding:8px 14px;border-color:var(--wg-gold)!important}
 body.wms-target-home #home .item{padding:17px 0}
 body.wms-target-home .footer{padding:30px 0;font-size:18px}
 body.wms-unified-nav .brand{font-size:34px;padding:24px 28px;gap:14px}
@@ -212,7 +212,7 @@ body.wms-target-home #home .intro h1{color:var(--wg-gold)}
  body.wms-target-home #home .task:first-of-type{margin-top:4px}
  body.wms-target-home #home .task strong,body.wms-target-home #home .item b{font-size:16px}
  body.wms-target-home #home .task p,body.wms-target-home #home .item p{font-size:14px}
- body.wms-target-home #home .task .btn{font-size:14px;padding:6px 10px}
+ body.wms-target-home #home :is(.task,#suppliesHomeReminder) .btn{font-size:14px;padding:6px 10px}
  body.wms-target-home .nav button{min-height:42px;font-size:16px;padding-block:7px}
  body.wms-target-home #nav .nav-group>summary{font-size:16px;padding-block:8px}
 }
@@ -327,6 +327,17 @@ html[data-theme="dark"] body.wms-unified-nav #siLocationSettings :is(.su-head,.s
 #suppliesHomeReminder:not([hidden]){display:flex;align-items:center;justify-content:space-between;gap:12px}
 #suppliesHomeReminder>div{min-width:0;overflow-wrap:anywhere}
 #suppliesHomeReminder>.btn{flex-shrink:0;white-space:nowrap}
+html body #home #suppliesHomeReminder>.btn{
+  background:#502a13!important;
+  border-color:#ff9b51!important;
+  color:#ffd7b5!important;
+}
+html body #home #suppliesHomeReminder>.btn:hover{
+  background:#693819!important;
+}
+html body #home #suppliesHomeReminder>.btn:focus-visible{
+  outline-color:#ff9b51!important;
+}
 #suppliesHomeReminder[hidden],#suppliesList[hidden],#suppliesThresholdForm[hidden]{display:none}
 #suppliesList .supplies-threshold-input{box-sizing:border-box;width:100%;min-width:4rem;padding:4px;color:inherit;background:var(--wg-surface);border:1px solid var(--wg-line);border-radius:6px}
 #suppliesList{margin-bottom:16px}
