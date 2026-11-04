@@ -329,6 +329,9 @@ html[data-theme="dark"] body.wms-unified-nav #siLocationSettings :is(.su-head,.s
 #suppliesList .supplies-table-wrap{overflow-x:auto}
 #suppliesList table{width:100%;border-collapse:collapse;text-align:left}
 #suppliesList th,#suppliesList td{padding:10px 12px;border:1px solid var(--wg-line,#626367);white-space:nowrap}
+#suppliesList table[aria-label="消耗品清單"] th,#suppliesList table[aria-label="消耗品清單"] td{padding:5px 8px;font-size:14px;line-height:1.35}
+#suppliesList table[aria-label="消耗品清單"] .btn{padding:4px 9px;min-height:28px;font-size:13px;line-height:1.35}
+#suppliesList [data-count-form] input{width:7rem;min-height:44px;color:inherit;background:var(--wg-surface);border:1px solid var(--wg-line);border-radius:6px;padding:6px}
 #suppliesList th{background:var(--wg-raised);font-weight:700}
 #suppliesList .supplies-edit{display:grid;gap:12px}
 #suppliesList .supplies-edit[hidden]{display:none}
@@ -336,7 +339,7 @@ html[data-theme="dark"] body.wms-unified-nav #siLocationSettings :is(.su-head,.s
 #suppliesList .supplies-edit input{width:100%;padding:8px;color:inherit;background:var(--wg-surface);border:1px solid var(--wg-line);border-radius:6px}
 #suppliesList .supplies-edit>div{display:flex;gap:8px}
 </style>
-</head><body><aside class="sidebar"><div class="brand"><svg class="brand-cube" viewBox="0 0 48 52" aria-hidden="true"><path fill="#8ed2ff" d="m24 0 22 12-22 12L2 12Z"/><path fill="#349ced" d="m2 17 19 11v24L2 41Z"/><path fill="#0876d9" d="m27 28 19-11v24L27 52Z"/></svg><div>BOMB<span>WMS 倉儲管理</span></div></div><div class="sub">倉儲工作空間</div><nav class="nav" id="nav" aria-label="倉儲功能選單"></nav><a class="return" href="./index.html#lobby"><svg class="wms-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2" y="2" width="4" height="4" rx="1"/><rect x="10" y="2" width="4" height="4" rx="1"/><rect x="18" y="2" width="4" height="4" rx="1"/><rect x="2" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="18" y="10" width="4" height="4" rx="1"/><rect x="2" y="18" width="4" height="4" rx="1"/><rect x="10" y="18" width="4" height="4" rx="1"/><rect x="18" y="18" width="4" height="4" rx="1"/></svg><span>返回工作大廳</span></a></aside><div class="main"><header class="top"><strong id="crumb">倉儲工作台</strong><span>OG · 測試管理者　 <span class="chip">原型預覽</span></span></header><main class="content"><div id="home"><div class="intro"><div><div class="wms-home-heading"><h1>倉儲工作台</h1><button type="button" class="btn" id="wmsHomeHelp">功能說明</button></div><p style="margin:0">從今天要做的事開始，掌握物品的每一次移動。</p></div><label style="font-size:13px;color:#8490a4">示範範圍　<select id="scope"><option>全部據點</option><option>總部</option><option>辦公室</option></select></label></div><div class="notice">目標規畫 · 示意資料｜數量與待辦為展示內容；各項作業依目前實作進度開放。</div><div class="stats" id="stats"></div><div class="section"><h2>常用作業</h2><span style="font-size:12px;color:#929aac">選擇功能查看作業範圍</span></div><div class="quick"><button data-go="申請與提領"><svg class="wms-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h9l5 5v6M14 3v6h5M5 3v18h7m2-3h8m-4-4v8"/></svg><span>領用申請</span></button><button data-go="收貨與驗貨"><svg class="wms-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 7 9-5 9 5-9 5Zm0 0v10l7 4M12 12v5m3 2 2 2 5-6"/></svg><span>收貨與驗貨</span></button><button data-go="盤點作業"><svg class="wms-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="m7 8 1 1 2-2m-3 6 1 1 2-2M13 8h4m-4 5h4M7 18h10"/></svg><span>開始盤點</span></button><button data-go="緊急補登"><svg class="wms-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M5 9h1m3 0h1m3 0h1m3 0h1M5 12h1m3 0h1m3 0h1m3 0h1M7 16h10"/></svg><span>手動補登</span></button></div><div class="grid"><section class="panel"><div class="section"><h2>我的待辦</h2><span class="chip">示範資料</span></div><div id="tasks"></div></section><section class="panel"><h2>作業提醒</h2><div class="item"><b>依指定儲位提領</b><p>依適用作業規則核對物品、位置與數量後完成提領。</p></div><div class="item"><b>驗貨異常待處理</b><p>異常物品暫不可領用，依企業設定的流程交由負責人員處理。</p></div><div class="item"><b>依盤點結果確認差異</b><p>保留盤點結果與調整紀錄；不同管理類型依各自規則處理。</p></div></section></div></div><section class="module" id="module"><div class="intro"><div><h1 id="title"></h1><p id="desc"></p></div><button class="btn" data-go="倉儲工作台">返回首頁</button></div><section class="panel" id="suppliesList" hidden><h2>消耗品清單</h2><p>共 18 筆。可逐筆編輯。剩餘量小於或等於低庫存門檻時，清單會標示「低庫存」。門檻以盤點單位計算，留空則停用提醒。</p><div class="supplies-table-wrap"><table aria-label="消耗品清單"><thead><tr><th scope="col">品項</th><th scope="col">供應商／來源</th><th scope="col">包裝規格</th><th scope="col">剩餘量</th><th scope="col">補貨量</th><th scope="col">盤點單位</th><th scope="col">低庫存門檻</th><th scope="col">操作</th></tr></thead><tbody>
+</head><body><aside class="sidebar"><div class="brand"><svg class="brand-cube" viewBox="0 0 48 52" aria-hidden="true"><path fill="#8ed2ff" d="m24 0 22 12-22 12L2 12Z"/><path fill="#349ced" d="m2 17 19 11v24L2 41Z"/><path fill="#0876d9" d="m27 28 19-11v24L27 52Z"/></svg><div>BOMB<span>WMS 倉儲管理</span></div></div><div class="sub">倉儲工作空間</div><nav class="nav" id="nav" aria-label="倉儲功能選單"></nav><a class="return" href="./index.html#lobby"><svg class="wms-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2" y="2" width="4" height="4" rx="1"/><rect x="10" y="2" width="4" height="4" rx="1"/><rect x="18" y="2" width="4" height="4" rx="1"/><rect x="2" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="18" y="10" width="4" height="4" rx="1"/><rect x="2" y="18" width="4" height="4" rx="1"/><rect x="10" y="18" width="4" height="4" rx="1"/><rect x="18" y="18" width="4" height="4" rx="1"/></svg><span>返回工作大廳</span></a></aside><div class="main"><header class="top"><strong id="crumb">倉儲工作台</strong><span>OG · 測試管理者　 <span class="chip">原型預覽</span></span></header><main class="content"><div id="home"><div class="intro"><div><div class="wms-home-heading"><h1>倉儲工作台</h1><button type="button" class="btn" id="wmsHomeHelp">功能說明</button></div><p style="margin:0">從今天要做的事開始，掌握物品的每一次移動。</p></div><label style="font-size:13px;color:#8490a4">示範範圍　<select id="scope"><option>全部據點</option><option>總部</option><option>辦公室</option></select></label></div><div class="notice">目標規畫 · 示意資料｜數量與待辦為展示內容；各項作業依目前實作進度開放。</div><div class="stats" id="stats"></div><div class="section"><h2>常用作業</h2><span style="font-size:12px;color:#929aac">選擇功能查看作業範圍</span></div><div class="quick"><button data-go="申請與提領"><svg class="wms-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h9l5 5v6M14 3v6h5M5 3v18h7m2-3h8m-4-4v8"/></svg><span>領用申請</span></button><button data-go="收貨與驗貨"><svg class="wms-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 7 9-5 9 5-9 5Zm0 0v10l7 4M12 12v5m3 2 2 2 5-6"/></svg><span>收貨與驗貨</span></button><button data-go="盤點作業"><svg class="wms-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="m7 8 1 1 2-2m-3 6 1 1 2-2M13 8h4m-4 5h4M7 18h10"/></svg><span>開始盤點</span></button><button data-go="緊急補登"><svg class="wms-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M5 9h1m3 0h1m3 0h1m3 0h1M5 12h1m3 0h1m3 0h1m3 0h1M7 16h10"/></svg><span>手動補登</span></button></div><div class="grid"><section class="panel"><div class="section"><h2>我的待辦</h2><span class="chip">示範資料</span></div><div id="tasks"></div></section><section class="panel"><h2>作業提醒</h2><div class="item"><b>依指定儲位提領</b><p>依適用作業規則核對物品、位置與數量後完成提領。</p></div><div class="item"><b>驗貨異常待處理</b><p>異常物品暫不可領用，依企業設定的流程交由負責人員處理。</p></div><div class="item"><b>依盤點結果確認差異</b><p>保留盤點結果與調整紀錄；不同管理類型依各自規則處理。</p></div></section></div></div><section class="module" id="module"><div class="intro"><div><h1 id="title"></h1><p id="desc"></p></div><button class="btn" data-go="倉儲工作台">返回首頁</button></div><section class="panel" id="suppliesList" hidden><h2>消耗品清單</h2><button class="btn" type="button" data-count-start>開始備品盤點</button><p>共 18 筆。可逐筆編輯。剩餘量小於或等於低庫存門檻時，清單會標示「低庫存」。門檻以盤點單位計算，留空則停用提醒。</p><div class="supplies-table-wrap"><table aria-label="消耗品清單"><thead><tr><th scope="col">品項</th><th scope="col">供應商／來源</th><th scope="col">包裝規格</th><th scope="col">剩餘量</th><th scope="col">補貨量</th><th scope="col">盤點單位</th><th scope="col">低庫存門檻</th><th scope="col">操作</th></tr></thead><tbody>
 <tr><td>擦手紙</td><td>廣達</td><td>1箱20包</td><td>6</td><td>1箱</td><td>包</td></tr>
 <tr><td>大捲筒衛生紙</td><td>廣達</td><td>1箱12捲</td><td>5</td><td>1箱</td><td>捲</td></tr>
 <tr><td>漂白水</td><td>廣達</td><td>1箱（4桶）</td><td>0</td><td>1箱</td><td>桶</td></tr>
@@ -355,7 +358,13 @@ html[data-theme="dark"] body.wms-unified-nav #siLocationSettings :is(.su-head,.s
 <tr><td>抹布(綠)</td><td>—</td><td>—</td><td>0</td><td>2條</td><td>條</td></tr>
 <tr><td>防蚊補充液</td><td>—</td><td>1盒（10入）</td><td>0</td><td>1盒</td><td>罐</td></tr>
 <tr><td>咖啡豆</td><td>財星購入</td><td>—</td><td>0</td><td>2包</td><td>包</td></tr>
-</tbody></table></div><form class="supplies-edit" hidden><h3>編輯消耗品</h3><label>品項<input required></label><label>供應商／來源<input ></label><label>包裝規格<input ></label><label>剩餘量<input type="number" min="0" step="any" required></label><label>補貨量<input ></label><label>盤點單位<input required></label><label>低庫存門檻<input type="number" min="0" step="any" placeholder="留空則停用"></label><div><button class="btn" type="submit">儲存</button><button class="btn" type="button" data-supplies-cancel>取消</button></div></form><p data-supplies-status role="status"></p></section><div class="panel"><span class="chip">功能規劃</span><h2 style="margin-top:20px">此功能包含</h2><div class="list" id="items"></div><div class="notice" style="margin-bottom:0">本頁目前僅提供功能規劃，尚未開放此項作業。實作進度會逐項核對，不代表已有正式功能。</div></div></section><div class="footer">BOMB WMS · 倉儲管理總覽</div></main></div><script src="./assets/workspace-auth.js"></script><script>
+</tbody></table></div><form class="supplies-edit" hidden><h3>編輯消耗品</h3><label>品項<input required></label><label>供應商／來源<input ></label><label>包裝規格<input ></label><label>剩餘量<input type="number" min="0" step="any" required></label><label>補貨量<input ></label><label>盤點單位<input required></label><label>低庫存門檻<input type="number" min="0" step="any" placeholder="留空則停用"></label><div><button class="btn" type="submit">儲存</button><button class="btn" type="button" data-supplies-cancel>取消</button></div></form><form data-count-form hidden>
+<h3>備品盤點</h3>
+<p>請輸入每一項的實盤量。沒有庫存請填 0，未填的品項會顯示「待盤點」。</p>
+<div class="supplies-table-wrap"><table aria-label="備品盤點"><thead><tr><th>品項</th><th>目前帳面量</th><th>本次實盤</th><th>低庫存門檻</th><th>判斷</th></tr></thead><tbody></tbody></table></div>
+<p><button class="btn" type="submit">提交盤點</button> <button class="btn" type="button" data-count-cancel>取消</button></p>
+</form>
+<p data-count-last></p><p data-supplies-status role="status"></p></section><div class="panel"><span class="chip">功能規劃</span><h2 style="margin-top:20px">此功能包含</h2><div class="list" id="items"></div><div class="notice" style="margin-bottom:0">本頁目前僅提供功能規劃，尚未開放此項作業。實作進度會逐項核對，不代表已有正式功能。</div></div></section><div class="footer">BOMB WMS · 倉儲管理總覽</div></main></div><script src="./assets/workspace-auth.js"></script><script>
 const currentOperator=Workspace.guard("WMS");if(!currentOperator)throw new Error("請先登入授權帳號");
 const iconPaths={"dashboard": "<rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/>", "clipboard": "<rect x=\"5\" y=\"4\" width=\"14\" height=\"17\" rx=\"2\"/><rect x=\"9\" y=\"2\" width=\"6\" height=\"4\" rx=\"1\"/><path d=\"m8 13 3 3 5-6\"/>", "box": "<path d=\"m3 7 9-5 9 5v10l-9 5-9-5Zm0 0 9 5 9-5M12 12v10M7.5 4.5l9 5\"/>", "receive": "<path d=\"m3 7 9-5 9 5-9 5Zm0 0v10l7 4M12 12v5m3 2 2 2 5-6\"/>", "request": "<path d=\"M5 3h9l5 5v6M14 3v6h5M5 3v18h7m2-3h8m-4-4v8\"/>", "returns": "<path d=\"M3 7h18m-4-4 4 4-4 4M21 17H3m4-4-4 4 4 4\"/>", "stock": "<path d=\"m3 6 7-4 7 4-7 4Zm0 0v9l7 4 3-2M10 10v9\"/><circle cx=\"17\" cy=\"16\" r=\"4\"/><path d=\"m20 19 3 3\"/>", "asset": "<rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\"/><path d=\"M8 22h8m-4-5v5M6 13h2\"/>", "wrench": "<path d=\"M21 4a6 6 0 0 1-8 8L5 21a2 2 0 0 1-3-3l9-8a6 6 0 0 1 8-8l-4 4 3 3Z\"/>", "warning": "<path d=\"m12 3 10 18H2Z M12 8v6m0 3v1\"/>", "location": "<circle cx=\"12\" cy=\"5\" r=\"3\"/><rect x=\"2\" y=\"17\" width=\"6\" height=\"5\" rx=\"1\"/><rect x=\"16\" y=\"17\" width=\"6\" height=\"5\" rx=\"1\"/><path d=\"M12 8v5M5 17v-4h14v4\"/>", "qr": "<path d=\"M3 8V3h5m8 0h5v5M3 16v5h5m8 0h5v-5\"/><rect x=\"7\" y=\"7\" width=\"3\" height=\"3\"/><rect x=\"14\" y=\"7\" width=\"3\" height=\"3\"/><rect x=\"7\" y=\"14\" width=\"3\" height=\"3\"/><path d=\"M14 14h3v3h-3Z\"/>", "bell": "<path d=\"M5 9a7 7 0 0 1 14 0v7l2 3H3l2-3Zm4 13h6\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 6v6l4 3\"/>", "scan": "<path d=\"M3 8V3h5m8 0h5v5M3 16v5h5m8 0h5v-5M7 7v10m4-10v10m3-10v10m3-10v10\"/>"};
 function icon(name){return '<svg class="wms-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(iconPaths[name]||iconPaths.box)+'</svg>';}
@@ -415,7 +424,7 @@ const modules={
   "由 PB 或指定人員盤點，日期及頻率可自訂；到貨以數量及日期登記",
   "消耗量＝前次盤點＋期間進貨－本次盤點，依近N天平均量估算採購建議",
   "不走一般領用、入庫、NFC／QR或身上貨品追蹤",
-  "盤點、進貨登記、消耗與採購建議及倉儲異動日誌均尚未實作"
+  "盤點可提交至本機。進貨登記、消耗與採購建議及倉儲異動日誌尚待實作"
  ],
  "資產與配置": [
   "既有彙總規劃入口保留",
@@ -542,7 +551,7 @@ moduleIcons['建立單據']='request';moduleIcons['我的單據']='clipboard';
 Object.assign(moduleIcons,{'物品管理':'box','進貨管理':'receive','退貨管理':'returns','借出管理':'returns','制服管理':'asset','無線電耳機管理':'asset','特殊物品分類':'box','廠商管理':'asset','設備技術資料':'asset','識別標籤管理':'qr','物品分類管理':'box','報廢管理':'warning','維修管理':'wrench'});
 const navLabels={'位置與分類':'倉別與位置設定','標籤與匯入':'Excel匯入','申請與提領':'領用管理','歸還與移轉':'入庫與位置移轉','庫存查詢':'庫存總覽','盤點作業':'盤點','備品管理':'備品區管理','設備技術資料':'設備管理','我的單據':'單據查詢'};
 const moduleStatus={
-'備品管理':'可查看與編輯本機消耗品清單，盤點及到貨登記等作業尚待實作。',
+'備品管理':'可編輯消耗品、提交本機盤點並判斷低庫存。到貨登記尚待實作。',
 '建立單據':'部分入口可操作；領用仍為獨立示範，移轉尚未接執行。',
 '我的單據':'目前僅顯示本機領用示範紀錄，尚未整合其他單據。',
 '我的任務':'目前為示範，尚未接通實際任務。',
@@ -892,8 +901,34 @@ if(back){
  let records = initial;
  let editing;
  let readFailed = false;
+ let stored;
+ let counts = [];
+ const countForm = panel.querySelector('[data-count-form]');
+ const countStart = panel.querySelector('[data-count-start]');
+ const lastCount = panel.querySelector('[data-count-last]');
+ let countInputs = [];
+ function showLastCount() {
+  const latest = counts[counts.length - 1];
+  lastCount.textContent = latest ? '最近一次盤點：' +
+   new Date(latest.at).toLocaleString('zh-TW', {timeZone:'Asia/Taipei'}) +
+   ' · ' + latest.by + ' · ' + latest.items.length + ' 項' : '';
+ }
+ function save(updated, history) {
+  if (localStorage.getItem(key) !== stored) throw new Error('清單已在另一個分頁更新，請重新整理後再操作。');
+  const next = JSON.stringify({records:updated, counts:history});
+  localStorage.setItem(key, next);
+  stored = next;
+  records = updated;
+  counts = history;
+ }
  try {
-  const saved = JSON.parse(localStorage.getItem(key));
+  stored = localStorage.getItem(key);
+  const data = JSON.parse(stored);
+  const saved = Array.isArray(data) ? data : data?.records ?? null;
+  if (data !== null && !Array.isArray(data)) {
+   if (!Array.isArray(data.records) || !Array.isArray(data.counts)) throw new Error('資料格式不符');
+   counts = data.counts;
+  }
   if (saved !== null) {
    if (!Array.isArray(saved) || saved.length !== rows.length || saved.some(record =>
     !Array.isArray(record) || ![fields.length - 1, fields.length].includes(record.length) || record.some(value => typeof value !== 'string')
@@ -928,7 +963,7 @@ if(back){
   button.textContent = '編輯';
   button.disabled = readFailed;
   button.addEventListener('click', () => {
-   if (!allowed('備品管理')) return;
+   if (!allowed('備品管理') || !countForm.hidden) return;
    editing = index;
    fields.forEach((field,column) => {
     const value = records[index][column];
@@ -952,15 +987,79 @@ if(back){
   const updated = records.slice();
   updated[editing] = values;
   try {
-   localStorage.setItem(key, JSON.stringify(updated));
+   save(updated, counts);
   } catch {
-   status.textContent = '儲存失敗，請確認瀏覽器允許本機儲存後重試。';
+   status.textContent = '儲存失敗，請重新整理並確認清單後再試。';
    return;
   }
-  records = updated;
   renderRow(editing);
   closeEditor();
   status.textContent = '已儲存在此瀏覽器。';
+ });
+ countStart.disabled = readFailed;
+ showLastCount();
+ countStart.addEventListener('click', () => {
+  if (!allowed('備品管理') || !countForm.hidden) return;
+  if (!form.hidden) closeEditor();
+  const body = countForm.querySelector('tbody');
+  body.replaceChildren();
+  countInputs = records.map(([name,,,quantity,,unit,threshold]) => {
+   const row = body.insertRow();
+   row.insertCell().textContent = name;
+   row.insertCell().textContent = quantity + ' ' + unit;
+   const input = document.createElement('input');
+   input.type = 'number';
+   input.min = '0';
+   input.step = 'any';
+   input.required = true;
+   input.setAttribute('aria-label', name + '實盤量（' + unit + '）');
+   row.insertCell().append(input, ' ' + unit);
+   row.insertCell().textContent = threshold === '' ? '—' : threshold + ' ' + unit;
+   const result = row.insertCell();
+   result.textContent = '待盤點';
+   input.addEventListener('input', () => {
+    const low = input.validity.valid && threshold !== '' && input.valueAsNumber <= Number(threshold);
+    result.textContent = !input.validity.valid ? '待盤點' : low ? '低庫存' : threshold === '' ? '未設定門檻' : '庫存正常';
+    result.style.color = low ? 'var(--wg-gold)' : '';
+   });
+   return input;
+  });
+  status.textContent = '';
+  countForm.hidden = false;
+  countStart.disabled = true;
+  countInputs[0].focus();
+ });
+ function closeCount() {
+  countForm.hidden = true;
+  countStart.disabled = false;
+  countStart.focus();
+ }
+ countForm.querySelector('[data-count-cancel]').addEventListener('click', closeCount);
+ countForm.addEventListener('submit', event => {
+  event.preventDefault();
+  if (countForm.hidden || !allowed('備品管理') || !countForm.reportValidity()) return;
+  const updated = records.map((record,index) => {
+   const item = record.slice();
+   item[3] = countInputs[index].value;
+   return item;
+  });
+  const count = {
+   at:new Date().toISOString(),
+   by:currentOperator.name,
+   items:updated.map(([name,,,quantity,,unit],index) => ({
+    name, unit, before:records[index][3], quantity
+   }))
+  };
+  try {
+   save(updated, [...counts,count]);
+  } catch {
+   status.textContent = '提交失敗。若清單已在其他分頁變更，請重新整理後再盤點。';
+   return;
+  }
+  rows.forEach((row,index) => renderRow(index));
+  showLastCount();
+  closeCount();
+  status.textContent = '盤點已提交，剩餘量及盤點紀錄已儲存在此瀏覽器。';
  });
 })();
 </script>
