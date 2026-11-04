@@ -171,9 +171,9 @@ body.wms-unified-nav .home-extra summary{font-size:16px;padding:12px 16px;color:
 </style><style>
 html[data-theme="dark"] body.wms-unified-nav{--wg-gold:#e7bf78;--wg-line:#515358;background:#222529}
 html[data-theme="dark"] body.wms-unified-nav :is(.sidebar,.top){background:#222426!important}
-html[data-theme="dark"] body.wms-target-home #home :is(.stat,.notice,.quick button,.grid>.panel){background:#292c30!important;border:1px solid #626367!important;box-shadow:none}
+html[data-theme="dark"] body.wms-target-home #home :is(.stat,.notice,.quick button,.grid>.panel){background:var(--wms-card-bg)!important;border:1px solid var(--wms-card-line)!important;box-shadow:none}
 html[data-theme="dark"] body.wms-target-home #home .grid>.panel{overflow:hidden}
-html[data-theme="dark"] body.wms-target-home #home .grid>.panel>:is(.section,h2):first-child{margin:-18px -24px 0;padding:14px 24px;background:#524733;color:#fff}
+html[data-theme="dark"] body.wms-target-home #home .grid>.panel>:is(.section,h2):first-child{margin:-18px -24px 0;padding:14px 24px;background:var(--wms-card-heading);color:#fff}
 html[data-theme="dark"] body.wms-unified-nav #nav button.active{background:#e7bf78!important;color:#191a1c!important}
 html[data-theme="dark"] body.wms-unified-nav #nav button.active svg{color:inherit!important}
 body.wms-unified-nav #nav .nav-group>summary{cursor:pointer;padding:12px 14px;font-size:17px}
@@ -257,26 +257,54 @@ body.wms-unified-nav #nav .nav-group[open]>summary::after {transform:rotate(45de
  body.wms-unified-nav.receipt-view .main{margin-left:0!important}
 }
 
-/* Desktop location settings, aligned with the overview reference. */
-@media screen and (min-width:951px){
- body.wms-unified-nav:has(#siLocationSettings:not([hidden])) .top{min-height:46px;padding:4px 32px;box-shadow:none}
- body.wms-unified-nav:has(#siLocationSettings:not([hidden])) .top>#crumb{display:none}
- body.wms-unified-nav:has(#siLocationSettings:not([hidden])) .theme-switch{border:0!important;background:transparent!important;border-radius:0;padding:3px 14px!important;border-inline:1px solid var(--wg-line)!important}
- body.wms-unified-nav:has(#siLocationSettings:not([hidden])) .theme-switch svg{width:30px;height:30px}
- body.wms-unified-nav:has(#siLocationSettings:not([hidden])) .theme-switch span{display:none}
- body.wms-unified-nav:has(#siLocationSettings:not([hidden])) .content{max-width:1530px;margin-inline:0 auto;padding:16px clamp(36px,6.8vw,114px) 32px 44px}
- body.wms-unified-nav:has(#siLocationSettings:not([hidden])) #module>.intro{align-items:flex-start;margin-bottom:18px}
- body.wms-unified-nav:has(#siLocationSettings:not([hidden])) #module #title{font-size:30px;line-height:1.15;margin:0 0 8px}
- body.wms-unified-nav:has(#siLocationSettings:not([hidden])) #module #desc{margin:0;line-height:1.5}
- body.wms-unified-nav:has(#siLocationSettings:not([hidden])) #wmsModuleStatus{margin-bottom:16px}
- body.wms-unified-nav:has(#siLocationSettings:not([hidden])) #siMasterTabs{margin-bottom:18px}
- body.wms-unified-nav:has(#siLocationSettings:not([hidden])) #wmsPlanningReference:not([hidden]){margin-top:10px;padding:10px 18px;border-radius:10px}
- body.wms-unified-nav:has(#siLocationSettings:not([hidden])) #wmsPlanningReference>summary{font-size:17px}
+/* Shared overview and module layout. Receiving keeps its compact workspace. */
+body.wms-unified-nav{
+ --wms-content-width:1440px;
+ --wms-card-bg:#292c30;
+ --wms-card-line:#626367;
+ --wms-card-heading:#524733;
+}
+@media screen and (min-width:1301px){
+ body.wms-unified-nav:not(.receipt-view,.employee-home) .content{
+  max-width:none;padding:14px 28px 0;
+ }
+ body.wms-target-home:not(.employee-home) #home,
+ body.wms-unified-nav:not(.receipt-view,.employee-home) #module{
+  width:100%;max-width:var(--wms-content-width);margin-inline:auto;
+ }
+ body.wms-unified-nav:not(.wms-target-home,.receipt-view,.employee-home) .top{
+  min-height:52px;padding:6px 22px;box-shadow:none;
+ }
+ body.wms-unified-nav:not(.wms-target-home,.receipt-view,.employee-home) .top>#crumb{display:none}
+ body.wms-unified-nav:not(.wms-target-home,.receipt-view,.employee-home) .theme-switch{
+  border:0!important;background:transparent!important;border-radius:0;
+  padding:3px 14px!important;border-inline:1px solid var(--wg-line)!important;
+ }
+ body.wms-unified-nav:not(.wms-target-home,.receipt-view,.employee-home) .theme-switch svg{width:30px;height:30px}
+ body.wms-unified-nav:not(.wms-target-home,.receipt-view,.employee-home) .theme-switch span{display:none}
+ body.wms-unified-nav #module>.intro{align-items:flex-start;margin-bottom:18px}
+ body.wms-unified-nav #module #title{font-size:30px;line-height:1.15;margin:0 0 8px}
+ body.wms-unified-nav #module #desc{margin:0;line-height:1.5}
+ body.wms-unified-nav #module :is(#siLocationSettings,#wmsPlanningReference,#wmsModuleStatus){max-width:var(--wms-content-width)}
+ body.wms-unified-nav #siMasterTabs{margin-bottom:18px}
+ body.wms-unified-nav #wmsPlanningReference:not([hidden]){margin-top:10px;padding:10px 18px;border-radius:10px}
+ body.wms-unified-nav #wmsPlanningReference>summary{font-size:17px}
+}
+html[data-theme="dark"] body.wms-unified-nav #module :is(.panel,.ss-panel,#siUpperLocation,#wmsPlanningReference){
+ background:var(--wms-card-bg)!important;border-color:var(--wms-card-line)!important;box-shadow:none;
+}
+html[data-theme="dark"] body.wms-unified-nav #module .btn:not(:hover,:disabled){
+ border-color:var(--wms-card-line)!important;
+}
+@media screen and (min-width:1301px){
+html[data-theme="dark"] body.wms-unified-nav #siLocationSettings :is(.su-head,.ss-warehouse-toolbar){
+ background:var(--wms-card-heading);
+ margin:-16px -16px 12px;padding:10px 16px;
+ border-radius:13px 13px 0 0;
+}
 }
 
-/* Desktop overview: one shared frame and aligned column gutters. */
 @media screen and (min-width:1301px){
- body.wms-target-home:not(.employee-home) #home{width:100%;max-width:1440px;margin-inline:auto}
  body.wms-target-home:not(.employee-home) #home :is(.stats,.quick,.grid){gap:16px}
  body.wms-target-home:not(.employee-home) #home :is(.stats,.quick){grid-template-columns:repeat(4,minmax(0,1fr))}
  body.wms-target-home:not(.employee-home) #home .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
