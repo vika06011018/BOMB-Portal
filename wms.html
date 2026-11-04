@@ -236,6 +236,27 @@ body.wms-unified-nav #nav .nav-group>summary::after {
 }
 body.wms-unified-nav #nav .nav-group[open]>summary::after {transform:rotate(45deg)}
 
+/* Shared desktop sidebar sizing for the overview and module pages. */
+@media screen and (min-width:601px){
+ body.wms-unified-nav{--wms-sidebar-width:216px}
+ body.wms-unified-nav .sidebar{width:var(--wms-sidebar-width)!important}
+ body.wms-unified-nav .main{margin-left:var(--wms-sidebar-width)!important}
+ body.wms-unified-nav .brand{font-size:28px;padding:19px 16px;gap:11px}
+ body.wms-unified-nav .brand span{font-size:13px;margin-top:5px}
+ body.wms-unified-nav .brand-cube{width:38px;height:42px}
+ body.wms-unified-nav .nav{padding:5px 10px}
+ body.wms-unified-nav #nav button{font-size:15px;min-height:42px;padding:7px 11px;gap:10px;white-space:nowrap}
+ body.wms-unified-nav #nav .wms-icon{width:20px;height:20px}
+ body.wms-unified-nav #nav .nav-group{padding-top:3px}
+ body.wms-unified-nav #nav .nav-group>summary{font-size:15px;min-height:42px;padding:7px 12px}
+ body.wms-unified-nav #nav .nav-group>button{padding-left:20px}
+ body.wms-unified-nav .return{font-size:16px;min-height:44px;margin:10px}
+ body.wms-unified-nav .return svg{width:23px;height:23px}
+}
+@media screen and (min-width:601px) and (max-width:1200px){
+ body.wms-unified-nav.receipt-view .main{margin-left:0!important}
+}
+
 /* Desktop overview: one shared frame and aligned column gutters. */
 @media screen and (min-width:1301px){
  body.wms-target-home:not(.employee-home) #home{width:100%;max-width:1440px;margin-inline:auto}
