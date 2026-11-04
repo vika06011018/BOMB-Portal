@@ -331,6 +331,19 @@ const upperStyle=el('style');upperStyle.textContent=`
 #siUpperLocation .su-fields{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;align-items:center;margin:22px 0}#siUpperLocation input,#siUpperLocation select{box-sizing:border-box;width:100%;min-width:0;min-height:44px;padding:10px;border:1px solid var(--wg-line,#51432d);border-radius:8px;background:var(--wg-bg,#101214);color:inherit;font:inherit}
 #siUpperLocation .su-fields input,#siUpperLocation .su-fields select,#siUpperLocation .su-fields output{margin-bottom:8px}#siUpperLocation .su-actions{display:flex;gap:12px;flex-wrap:wrap}#siUpperLocation output{line-height:1.8}#siUpperLocation [hidden]{display:none!important}#siUpperLocation #suError{color:#ec9a82}#siUpperLocation .su-note{font-size:14px}#suPreviewBox{margin-top:18px;padding:16px;border:1px solid var(--wg-line,#51432d);border-radius:10px}#suPreviewBox h4{margin:0 0 14px}#suPreviewBox dl{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;margin:0}#suPreviewBox dt{color:var(--wg-muted,#b8b4ac)}#suPreviewBox dd{margin:0;overflow-wrap:anywhere}#siUpperLocation :focus-visible{outline:2px solid #edba60;outline-offset:3px}
 @media(max-width:520px){#siUpperLocation{padding:16px}#siUpperLocation .su-fields,#suPreviewBox dl{grid-template-columns:minmax(0,1fr);gap:9px}#siUpperLocation input,#siUpperLocation select,#siUpperLocation output{margin-bottom:8px}}
+
+@media screen and (min-width:1101px){
+ #siLocationSettings .ss-top{gap:12px;margin-bottom:12px}
+ #siLocationSettings .ss-top p{margin-block:4px}
+ #siLocationSettings .ss-layout{gap:16px}
+ #siLocationSettings .ss-panel,#siLocationSettings #siUpperLocation{padding:16px}
+ #siLocationSettings .ss-warehouse-toolbar{gap:8px;padding-bottom:12px;margin-bottom:12px}
+ #siLocationSettings td,#siLocationSettings th{padding:8px 10px}
+ #siLocationSettings .ss-layout button{min-height:36px;padding:6px 10px}
+ #siLocationSettings #ssWarehouses,#siLocationSettings #siUpperLocation :is(input,select){min-height:36px;padding:7px 9px}
+ #siLocationSettings #siUpperLocation .su-fields{grid-template-columns:minmax(0,8em) minmax(0,1fr);gap:8px 10px;margin-block:12px}
+ #siLocationSettings #siUpperLocation .su-fields :is(input,select,output){margin-bottom:0}
+}
 `;document.head.append(upperStyle);
 
 // Source details are read-only and resolved from the current inventory document.
