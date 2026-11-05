@@ -346,7 +346,14 @@ html body #home #suppliesHomeReminder>.btn:focus-visible{
 #suppliesList th,#suppliesList td{padding:10px 12px;border:1px solid var(--wg-line,#626367);white-space:nowrap}
 #suppliesList table[aria-label="消耗品清單"] th,#suppliesList table[aria-label="消耗品清單"] td{padding:5px 8px;font-size:14px;line-height:1.35}
 #suppliesList table[aria-label="消耗品清單"] .btn{padding:4px 9px;min-height:28px;font-size:13px;line-height:1.35}
-#suppliesList [data-count-form] input{width:7rem;min-height:44px;color:inherit;background:var(--wg-surface);border:1px solid var(--wg-line);border-radius:6px;padding:6px}
+#suppliesCountDialog{width:min(680px,calc(100% - 24px));max-height:calc(100dvh - 24px);overflow:auto;margin:auto;padding:20px;border:1px solid var(--wg-line);border-radius:16px;background:var(--wg-surface);color:inherit}
+#suppliesCountDialog::backdrop{background:rgba(0,0,0,.65)}
+#suppliesCountDialog h3{margin-top:0}
+body.wms-unified-nav #nav .nav-group>button[data-count-menu]{padding-inline-start:42px;font-size:14px}
+#suppliesList input[data-supplies-number],#suppliesList [data-count-form] input{appearance:textfield;-moz-appearance:textfield}
+#suppliesList input[data-supplies-number]::-webkit-inner-spin-button,#suppliesList input[data-supplies-number]::-webkit-outer-spin-button,
+#suppliesList [data-count-form] input::-webkit-inner-spin-button,#suppliesList [data-count-form] input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+#suppliesList [data-count-form] input{width:5rem;min-height:44px;color:inherit;background:var(--wg-surface);border:1px solid var(--wg-line);border-radius:6px;padding:6px}
 #suppliesList table th:is(.supplies-remaining,.supplies-unit,.supplies-threshold,.supplies-hint){width:1%;padding-inline:6px}
 #suppliesList table[aria-label="消耗品清單"] :is(th,td,input){text-align:center}
 #suppliesList table[aria-label="消耗品清單"] :is(th,td):nth-child(-n+3),#suppliesList table[aria-label="消耗品清單"] td:nth-child(-n+3) input{text-align:left}
@@ -383,12 +390,15 @@ html body #home #suppliesHomeReminder>.btn:focus-visible{
 <tr><td>抹布(綠)</td><td>—</td><td>—</td><td>0</td><td>2條</td><td>條</td></tr>
 <tr><td>防蚊補充液</td><td>—</td><td>1盒（10入）</td><td>0</td><td>1盒</td><td>罐</td></tr>
 <tr><td>咖啡豆</td><td>財星購入</td><td>—</td><td>0</td><td>2包</td><td>包</td></tr>
-</tbody></table></div><form class="supplies-edit" hidden><h3>編輯消耗品</h3><label>品項<input required></label><label>供應商／來源<input ></label><label>包裝規格<input ></label><label>剩餘量<input type="number" min="0" step="any" required></label><label>補貨量<input ></label><label>盤點單位<input required></label><label>低庫存門檻<input type="number" min="0" step="any" placeholder="留空則停用"></label><div><button class="btn" type="submit">儲存</button><button class="btn" type="button" data-supplies-cancel>取消</button></div></form><form data-count-form hidden>
-<h3>備品盤點</h3>
-<p>請輸入每一項的實盤量。沒有庫存請填 0，未填的品項會顯示「待盤點」。</p>
-<div class="supplies-table-wrap"><table aria-label="備品盤點"><thead><tr><th>品項</th><th>目前帳面量</th><th>本次實盤</th><th class="supplies-threshold" scope="col">低庫存門檻</th><th class="supplies-hint" scope="col">提示</th></tr></thead><tbody></tbody></table></div>
+</tbody></table></div><form class="supplies-edit" hidden><h3>編輯消耗品</h3><label>品項<input required></label><label>供應商／來源<input ></label><label>包裝規格<input ></label><label>剩餘量<input type="number" min="0" step="any" required></label><label>補貨量<input ></label><label>盤點單位<input required></label><label>低庫存門檻<input type="number" min="0" step="any" placeholder="留空則停用"></label><div><button class="btn" type="submit">儲存</button><button class="btn" type="button" data-supplies-cancel>取消</button></div></form><dialog id="suppliesCountDialog" aria-labelledby="suppliesCountTitle">
+<form data-count-form>
+<h3 id="suppliesCountTitle">備品盤點</h3>
+<p>請輸入每項的盤點數量，數量為零時填 0。</p>
+<div class="supplies-table-wrap"><table aria-label="備品盤點"><thead><tr><th>品項</th><th>目前帳面量</th><th>盤點數量</th><th class="supplies-threshold" scope="col">低庫存門檻</th></tr></thead><tbody></tbody></table></div>
 <p><button class="btn" type="submit">提交盤點</button> <button class="btn" type="button" data-count-cancel>取消</button></p>
+<p data-count-error role="alert" hidden></p>
 </form>
+</dialog>
 <p data-count-last></p><p data-supplies-status role="status"></p></section><div class="panel"><span class="chip">功能規劃</span><h2 style="margin-top:20px">此功能包含</h2><div class="list" id="items"></div><div class="notice" style="margin-bottom:0">本頁目前僅提供功能規劃，尚未開放此項作業。實作進度會逐項核對，不代表已有正式功能。</div></div></section><div class="footer">BOMB WMS · 倉儲管理總覽</div></main></div><script src="./assets/workspace-auth.js"></script><script>
 const currentOperator=Workspace.guard("WMS");if(!currentOperator)throw new Error("請先登入授權帳號");
 const iconPaths={"dashboard": "<rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/>", "clipboard": "<rect x=\"5\" y=\"4\" width=\"14\" height=\"17\" rx=\"2\"/><rect x=\"9\" y=\"2\" width=\"6\" height=\"4\" rx=\"1\"/><path d=\"m8 13 3 3 5-6\"/>", "box": "<path d=\"m3 7 9-5 9 5v10l-9 5-9-5Zm0 0 9 5 9-5M12 12v10M7.5 4.5l9 5\"/>", "receive": "<path d=\"m3 7 9-5 9 5-9 5Zm0 0v10l7 4M12 12v5m3 2 2 2 5-6\"/>", "request": "<path d=\"M5 3h9l5 5v6M14 3v6h5M5 3v18h7m2-3h8m-4-4v8\"/>", "returns": "<path d=\"M3 7h18m-4-4 4 4-4 4M21 17H3m4-4-4 4 4 4\"/>", "stock": "<path d=\"m3 6 7-4 7 4-7 4Zm0 0v9l7 4 3-2M10 10v9\"/><circle cx=\"17\" cy=\"16\" r=\"4\"/><path d=\"m20 19 3 3\"/>", "asset": "<rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\"/><path d=\"M8 22h8m-4-5v5M6 13h2\"/>", "wrench": "<path d=\"M21 4a6 6 0 0 1-8 8L5 21a2 2 0 0 1-3-3l9-8a6 6 0 0 1 8-8l-4 4 3 3Z\"/>", "warning": "<path d=\"m12 3 10 18H2Z M12 8v6m0 3v1\"/>", "location": "<circle cx=\"12\" cy=\"5\" r=\"3\"/><rect x=\"2\" y=\"17\" width=\"6\" height=\"5\" rx=\"1\"/><rect x=\"16\" y=\"17\" width=\"6\" height=\"5\" rx=\"1\"/><path d=\"M12 8v5M5 17v-4h14v4\"/>", "qr": "<path d=\"M3 8V3h5m8 0h5v5M3 16v5h5m8 0h5v-5\"/><rect x=\"7\" y=\"7\" width=\"3\" height=\"3\"/><rect x=\"14\" y=\"7\" width=\"3\" height=\"3\"/><rect x=\"7\" y=\"14\" width=\"3\" height=\"3\"/><path d=\"M14 14h3v3h-3Z\"/>", "bell": "<path d=\"M5 9a7 7 0 0 1 14 0v7l2 3H3l2-3Zm4 13h6\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 6v6l4 3\"/>", "scan": "<path d=\"M3 8V3h5m8 0h5v5M3 16v5h5m8 0h5v-5M7 7v10m4-10v10m3-10v10m3-10v10\"/>"};
@@ -929,12 +939,32 @@ if(back){
  let stored;
  let counts = [];
  const countForm = panel.querySelector('[data-count-form]');
+ const countDialog = panel.querySelector('#suppliesCountDialog');
+ const countError = countForm.querySelector('[data-count-error]');
+ const suppliesNav = document.querySelector('#nav button[data-go="備品管理"]');
+ const countMenu = document.createElement('button');
+ countMenu.type = 'button';
+ countMenu.dataset.countMenu = '';
+ countMenu.setAttribute('aria-haspopup', 'dialog');
+ countMenu.setAttribute('aria-controls', countDialog.id);
+ countMenu.innerHTML = icon('clipboard') + '<span>備品盤點</span>';
+ suppliesNav?.after(countMenu);
  const countStart = panel.querySelector('[data-count-start]');
  const lastCount = panel.querySelector('[data-count-last]');
  let countInputs = [];
  const thresholdStart = panel.querySelector('[data-threshold-start]');
  const thresholdForm = panel.querySelector('#suppliesThresholdForm');
  let thresholdInputs = [];
+ function normalizeQuantity(value) {
+  return value.replace(/^0+(?=\d)/, '');
+ }
+ function configureQuantityField(input) {
+  input.dataset.suppliesNumber = '';
+  input.addEventListener('blur', () => {
+   if (input.validity.valid) input.value = normalizeQuantity(input.value);
+  });
+ }
+ [fields[3], fields[6]].forEach(configureQuantityField);
  function showLastCount() {
   const latest = counts[counts.length - 1];
   lastCount.textContent = latest ? '最近一次盤點：' +
@@ -1001,7 +1031,7 @@ if(back){
   button.textContent = '編輯';
   button.disabled = readFailed;
   button.addEventListener('click', () => {
-   if (!allowed('備品管理') || !countForm.hidden || !thresholdForm.hidden) return;
+   if (!allowed('備品管理') || countDialog.open || !thresholdForm.hidden) return;
    editing = index;
    fields.forEach((field,column) => {
     const value = records[index][column];
@@ -1017,7 +1047,7 @@ if(back){
  form.addEventListener('submit', event => {
   event.preventDefault();
   if (editing === undefined || !allowed('備品管理')) return;
-  const values = fields.map(field => field.value.trim());
+  const values = fields.map((field,column) => [3,6].includes(column) ? normalizeQuantity(field.value) : field.value.trim());
   if (!values[0] || !values[5]) {
    status.textContent = '請填寫品項及盤點單位。';
    return;
@@ -1035,15 +1065,17 @@ if(back){
   status.textContent = '已儲存在此瀏覽器。';
  });
  renderHomeReminder();
- countStart.disabled = readFailed;
+ countStart.disabled = countMenu.disabled = readFailed;
+ countStart.setAttribute('aria-haspopup', 'dialog');
+ countStart.setAttribute('aria-controls', countDialog.id);
  thresholdStart.disabled = readFailed;
  thresholdStart.addEventListener('click', () => {
-  if (!allowed('備品管理') || !countForm.hidden || !thresholdForm.hidden) return;
+  if (!allowed('備品管理') || countDialog.open || !thresholdForm.hidden) return;
   if (!form.hidden) closeEditor();
   status.textContent = '';
   thresholdForm.hidden = false;
   thresholdStart.disabled = true;
-  countStart.disabled = true;
+  countStart.disabled = countMenu.disabled = true;
   rows.forEach(row => { row.querySelector("button").disabled = true; });
   const labels = ['品項','供應商／來源','包裝規格','剩餘量','補貨量','盤點單位','低庫存門檻'];
   thresholdInputs = rows.map((row,index) => records[index].map((value,column) => {
@@ -1054,6 +1086,7 @@ if(back){
     input.type = 'number';
     input.min = '0';
     input.step = 'any';
+    configureQuantityField(input);
    }
    input.setAttribute('form', thresholdForm.id);
    input.setAttribute('aria-label', records[index][0] + ' ' + labels[column]);
@@ -1068,7 +1101,7 @@ if(back){
   thresholdForm.hidden = true;
   rows.forEach(row => { row.querySelector("button").disabled = false; });
   thresholdStart.disabled = false;
-  countStart.disabled = false;
+  countStart.disabled = countMenu.disabled = false;
   thresholdStart.focus();
  }
  thresholdForm.querySelector('[data-threshold-cancel]').addEventListener('click', () => {
@@ -1078,7 +1111,7 @@ if(back){
  thresholdForm.addEventListener('submit', event => {
   event.preventDefault();
   if (thresholdForm.hidden || !allowed('備品管理') || !thresholdForm.reportValidity()) return;
-  const updated = thresholdInputs.map(inputs => inputs.map(input => input.value.trim()));
+  const updated = thresholdInputs.map(inputs => inputs.map((input,column) => [3,6].includes(column) ? normalizeQuantity(input.value) : input.value.trim()));
   const invalid = updated.findIndex(record => !record[0] || !record[5]);
   if (invalid !== -1) {
    status.textContent = '請填寫品項及盤點單位。';
@@ -1095,8 +1128,12 @@ if(back){
   status.textContent = '整頁變更已儲存在此瀏覽器。';
  });
  showLastCount();
- countStart.addEventListener('click', () => {
-  if (!allowed('備品管理') || !countForm.hidden || !thresholdForm.hidden) return;
+ countStart.addEventListener('click', openCount);
+ countMenu.addEventListener('click', openCount);
+ function openCount(event) {
+  if (readFailed || !allowed('備品管理') || countDialog.open || !thresholdForm.hidden) return;
+  if (panel.hidden) go('備品管理');
+  if (panel.hidden) return;
   if (!form.hidden) closeEditor();
   const body = countForm.querySelector('tbody');
   body.replaceChildren();
@@ -1109,32 +1146,22 @@ if(back){
    input.min = '0';
    input.step = 'any';
    input.required = true;
-   input.setAttribute('aria-label', name + '實盤量（' + unit + '）');
+   input.setAttribute('aria-label', name + '盤點數量（' + unit + '）');
    row.insertCell().append(input, ' ' + unit);
    row.insertCell().textContent = threshold === '' ? '—' : threshold + ' ' + unit;
-   const result = row.insertCell();
-   result.textContent = '待盤點';
-   input.addEventListener('input', () => {
-    const low = input.validity.valid && threshold !== '' && input.valueAsNumber <= Number(threshold);
-    result.textContent = !input.validity.valid ? '待盤點' : low ? '低庫存' : threshold === '' ? '未設定門檻' : '庫存正常';
-    result.style.color = low ? 'var(--wg-gold)' : '';
-   });
    return input;
   });
   status.textContent = '';
-  countForm.hidden = false;
-  countStart.disabled = true;
+  countError.hidden = true;
+  countError.textContent = '';
+  event.currentTarget.focus();
+  countDialog.showModal();
   countInputs[0].focus();
- });
- function closeCount() {
-  countForm.hidden = true;
-  countStart.disabled = false;
-  countStart.focus();
  }
- countForm.querySelector('[data-count-cancel]').addEventListener('click', closeCount);
+ countForm.querySelector('[data-count-cancel]').addEventListener('click', () => countDialog.close());
  countForm.addEventListener('submit', event => {
   event.preventDefault();
-  if (countForm.hidden || !allowed('備品管理') || !countForm.reportValidity()) return;
+  if (!countDialog.open || !allowed('備品管理') || !countForm.reportValidity()) return;
   const updated = records.map((record,index) => {
    const item = record.slice();
    item[3] = countInputs[index].value;
@@ -1150,12 +1177,13 @@ if(back){
   try {
    save(updated, [...counts,count]);
   } catch {
-   status.textContent = '提交失敗。若清單已在其他分頁變更，請重新整理後再盤點。';
+   countError.textContent = '提交失敗。若清單已在其他分頁變更，請重新整理後再盤點。';
+   countError.hidden = false;
    return;
   }
   rows.forEach((row,index) => renderRow(index));
   showLastCount();
-  closeCount();
+  countDialog.close();
   status.textContent = '盤點已提交，剩餘量及盤點紀錄已儲存在此瀏覽器。';
  });
 })();
