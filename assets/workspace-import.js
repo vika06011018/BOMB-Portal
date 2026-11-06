@@ -561,11 +561,12 @@ const RACK_TYPES=['一般貨架','待驗區','維修區','報廢區','特殊用�
 function rackSettings(data,warehouse,location){
  const d=[...setupDefinitions(data)].reverse().find(x=>x.warehouse===warehouse&&x.location===location)||{};
  for(const key of ['rackType','rackCode','rackAccessCode'])if(d[key]!==undefined&&(typeof d[key]!=='string'||d[key].length>200))throw Error('貨架設定格式不正確，原資料已保留。');
+ if(d.stockLedger!==undefined&&typeof d.stockLedger!=='boolean')throw Error('位置庫存帳設定格式不正確，原資料已保留。');
  return d;
 }
 function rackTypeOptions(data){return [...new Set([...RACK_TYPES,...setupDefinitions(data).map(d=>d.rackType).filter(x=>typeof x==='string'&&norm(x))])];}
 const rackDialog=el('dialog');rackDialog.id='siRackDialog';rackDialog.setAttribute('aria-labelledby','rkTitle');
-rackDialog.innerHTML='<h2 id="rkTitle">貨架設定</h2><p id="rkWarehouse"></p><div class="rk-fields"><label for="rkName">貨架／位置名稱</label><input id="rkName" maxlength="200" autocomplete="off"><span>貨架代碼</span><div class="rk-code-box"><output id="rkCode"></output><button class="btn" id="rkGenerateTest" type="button" hidden>產生本機測試代碼</button><p class="rk-code-note">測試代碼與標籤僅在此瀏覽器保存；正式跨裝置識別尚未串接。</p></div><label for="rkKind">位置性質</label><select id="rkKind"><option value="unknown">待確認</option><option value="inside">倉庫內</option><option value="outside">倉庫外使用位置</option></select><label for="rkType">貨架類型</label><select id="rkType"></select><label for="rkCustom" id="rkCustomLabel" hidden>自訂類型名稱</label><input id="rkCustom" maxlength="100" hidden><span>貨架識別標籤</span><div id="rkLabel"></div><label for="rkReason" id="rkReasonLabel">修改原因</label><textarea id="rkReason" maxlength="500" rows="2"></textarea></div><p>名稱、位置性質與類型可在此一起設定。修改名稱會同步更新此位置下品項的位置名稱，數量不變。</p><p id="rkError" role="alert"></p><div class="rk-actions"><button class="btn" id="rkCancel">取消</button><button class="btn" id="rkSave">儲存設定</button></div>';
+rackDialog.innerHTML='<h2 id="rkTitle">貨架設定</h2><p id="rkWarehouse"></p><div class="rk-fields"><label for="rkName">貨架／位置名稱</label><input id="rkName" maxlength="200" autocomplete="off"><span>貨架代碼</span><div class="rk-code-box"><output id="rkCode"></output><button class="btn" id="rkGenerateTest" type="button" hidden>產生本機測試代碼</button><p class="rk-code-note">測試代碼與標籤僅在此瀏覽器保存；正式跨裝置識別尚未串接。</p></div><label for="rkKind">位置性質</label><select id="rkKind"><option value="unknown">待確認</option><option value="inside">倉庫內</option><option value="outside">倉庫外使用位置</option></select><label for="rkLedger">位置庫存帳</label><select id="rkLedger"><option value="off">不另建庫存帳</option><option value="on">建立庫存帳（交付後入帳）</option></select><label for="rkType">貨架類型</label><select id="rkType"></select><label for="rkCustom" id="rkCustomLabel" hidden>自訂類型名稱</label><input id="rkCustom" maxlength="100" hidden><span>貨架識別標籤</span><div id="rkLabel"></div><label for="rkReason" id="rkReasonLabel">修改原因</label><textarea id="rkReason" maxlength="500" rows="2"></textarea></div><p>名稱、位置性質與類型可在此一起設定。位置庫存帳僅套用新建立的領用任務，既有單據不會自動補帳。修改名稱會同步更新此位置下品項的位置名稱，數量不變。</p><p id="rkError" role="alert"></p><div class="rk-actions"><button class="btn" id="rkCancel">取消</button><button class="btn" id="rkSave">儲存設定</button></div>';
 document.body.append(rackDialog);
 const rk=id=>rackDialog.querySelector('#'+id);let rackTarget=null,rackBusy=false;
 function updateRackCustom(){const custom=rk('rkType').value==='custom';rk('rkCustom').hidden=rk('rkCustomLabel').hidden=!custom;}
@@ -579,27 +580,32 @@ function openRackSettings(warehouse,location=null){try{
  showRackLabelSetting(data,warehouse,location);
  rk('rkType').replaceChildren(new Option(!creating&&!d.rackType?'待設定（保留原狀）':'請選擇貨架類型',''),...options.map((name,index)=>new Option(name,String(index))),new Option('＋ 自訂類型','custom'));
  rk('rkKind').value=creating?'unknown':locationKind(data,warehouse,location);
+ rk('rkLedger').value=d.stockLedger===true?'on':'off';
  rk('rkType').value=d.rackType?String(options.indexOf(d.rackType)):'';
  rk('rkType')._rackOptions=options;rk('rkCustom').value='';rk('rkReason').value='';rk('rkError').textContent='';updateRackCustom();rackDialog.showModal();rk('rkName').focus();
  }catch(error){ss('ssError').textContent=error.message;}}
-function applyRackSettings(data,warehouse,location,name,type,reason,user,kind){
+function applyRackSettings(data,warehouse,location,name,type,reason,user,kind,stockLedger){
  const groups=setupGroups(data),creating=location===null;
  if(!groups.has(warehouse)||!creating&&(!location||!groups.get(warehouse).has(location)))throw Error('倉別或位置已變更。');
  if(typeof name!=='string'||!norm(name)||name.length>200)throw Error('請填寫貨架／位置名稱，最多 200 字。');
  if([...groups.get(warehouse).keys()].some(v=>v!==location&&definitionName(v)===definitionName(name)))throw Error('此倉別已有相同名稱的位置。');
  const before=creating?null:rackSettings(data,warehouse,location),oldType=before?.rackType||'',oldKind=creating?'unknown':locationKind(data,warehouse,location);
+ const oldLedger=before?.stockLedger===true;
+ if(stockLedger===undefined)stockLedger=oldLedger;
+ if(typeof stockLedger!=='boolean')throw Error('位置庫存帳設定不正確。');
+ if(stockLedger&&(kind===undefined?oldKind:kind)!=='outside')throw Error('獨立位置庫存帳目前僅支援倉庫外位置。');
  if(kind===undefined)kind=oldKind;
  if(!LOCATION_KINDS.includes(kind))throw Error('請選擇有效的位置性質。');
  if(typeof type!=='string'||type.length>100||(!norm(type)&&(creating||oldType)))throw Error('請選擇貨架類型，自訂名稱最多 100 字。');
- if(!creating&&location===name&&oldType===type&&oldKind===kind)return false;
+ if(!creating&&location===name&&oldType===type&&oldKind===kind&&oldLedger===stockLedger)return false;
  if(!creating&&(typeof reason!=='string'||!norm(reason)||reason.length>500))throw Error('請填寫修改原因，最多 500 字。');
  if(data.locationSettingHistory!==undefined&&!Array.isArray(data.locationSettingHistory))throw Error('設定異動紀錄格式不正確，原資料已保留。');
  const definitions=setupDefinitions(data).map(d=>({...d}));let found=false,affected=0;
- for(const d of definitions)if(!creating&&d.warehouse===warehouse&&d.location===location){d.location=name;if(type)d.rackType=type;if(kind!==oldKind)d.kind=kind;found=true;}
- if(!found)definitions.push({warehouse,location:name,...(type?{rackType:type}:{}),...(kind!=='unknown'?{kind}:{})});
+ for(const d of definitions)if(!creating&&d.warehouse===warehouse&&d.location===location){d.location=name;if(type)d.rackType=type;if(kind!==oldKind)d.kind=kind;if(stockLedger!==oldLedger)d.stockLedger=stockLedger;found=true;}
+ if(!found)definitions.push({warehouse,location:name,...(type?{rackType:type}:{}),...(kind!=='unknown'?{kind}:{}),...(stockLedger?{stockLedger:true}:{})});
  if(!creating&&name!==location)for(const batch of data.batches)for(const row of batch.rows)if(row.warehouse===warehouse&&row.location===location){row.location=name;affected++;}
  data.locationSettings=definitions;
- data.locationSettingHistory=[...(data.locationSettingHistory||[]),{action:creating?'addRackLocation':'editRackLocation',warehouse,before:creating?null:{location,rackType:oldType||null,kind:oldKind},after:{location:name,rackType:type||null,kind},affectedRows:affected,reason:creating?'新增貨架／位置':reason,at:new Date().toISOString(),actorId:user.id,actorName:user.name||user.account||'操作人員'}];
+ data.locationSettingHistory=[...(data.locationSettingHistory||[]),{action:creating?'addRackLocation':'editRackLocation',warehouse,before:creating?null:{location,rackType:oldType||null,kind:oldKind,stockLedger:oldLedger},after:{location:name,rackType:type||null,kind,stockLedger},affectedRows:affected,reason:creating?'新增貨架／位置':reason,at:new Date().toISOString(),actorId:user.id,actorName:user.name||user.account||'操作人員'}];
  return true;
 }
 async function saveRackSettings(){if(rackBusy)return;rackBusy=true;rk('rkSave').disabled=true;try{
@@ -610,7 +616,7 @@ async function saveRackSettings(){if(rackBusy)return;rackBusy=true;rk('rkSave').
  await locked(inventoryKey(),()=>{
   if(!settingsAuthorized()||ownerScope()!==t.scope||!rackDialog.open||rackTarget!==t)throw Error('操作已取消或登入權限已變更。');
   if(localStorage.getItem(inventoryKey())!==t.raw)throw Error('資料已由其他操作更新，請關閉後重新開啟。');
-  const data=readInventory();changed=applyRackSettings(data,t.warehouse,t.location,name,type,reason,actor(),rk('rkKind').value);if(changed)writeLocal(inventoryKey(),JSON.stringify(data));
+  const data=readInventory();changed=applyRackSettings(data,t.warehouse,t.location,name,type,reason,actor(),rk('rkKind').value,rk('rkLedger').value==='on');if(changed)writeLocal(inventoryKey(),JSON.stringify(data));
  });
  rackDialog.close();renderSettings();ss('ssStatus').textContent=changed?'已儲存貨架／位置設定於此瀏覽器，庫存數量不變；正式跨裝置識別尚未串接。':'名稱、位置性質與類型未變更。';
  }catch(error){rk('rkError').textContent=error.message;}finally{rackBusy=false;rk('rkSave').disabled=false;}}
@@ -679,7 +685,7 @@ function issueLocalRackLabel(data,warehouse,location,user){
  for(const row of definitions)if(row.warehouse===warehouse&&row.location===location){row.rackAccessCode=accessCode;row.rackLabelId=id;row.rackQrContent=qr;row.rackLabelMode='local-test';row.rackLabelCreatedAt=now;}
  data.locationSettings=definitions;data.locationSettingHistory=[...(data.locationSettingHistory||[]),{action:'issueLocalRackLabel',warehouse,location,before:d.rackAccessCode||null,after:{rackCode:d.rackCode,accessCode,qr,labelId:id},mode:'local-test',at:now,actorId:user.id,actorName:user.name||user.account||'操作人員'}];return {code:d.rackCode,accessCode,qr,id};
 }
-function rackDraftChanged(t,data){const value=rk('rkType').value,options=rk('rkType')._rackOptions||[],type=value==='custom'?norm(rk('rkCustom').value):/^\d+$/.test(value)?options[Number(value)]:'';return rk('rkKind').value!==locationKind(data,t.warehouse,t.location)||norm(rk('rkName').value)!==t.location||type!==(rackSettings(data,t.warehouse,t.location).rackType||'')||!!norm(rk('rkReason').value);}
+function rackDraftChanged(t,data){const value=rk('rkType').value,options=rk('rkType')._rackOptions||[],type=value==='custom'?norm(rk('rkCustom').value):/^\d+$/.test(value)?options[Number(value)]:'';return (rk('rkLedger').value==='on')!==(rackSettings(data,t.warehouse,t.location).stockLedger===true)||rk('rkKind').value!==locationKind(data,t.warehouse,t.location)||norm(rk('rkName').value)!==t.location||type!==(rackSettings(data,t.warehouse,t.location).rackType||'')||!!norm(rk('rkReason').value);}
 function showRackLabelSetting(data,warehouse,location){const host=rk('rkLabel');host.replaceChildren();if(location===null){host.append(el('span','先儲存新貨架，再產生 QR＋6 碼標籤。'));return;}const d=rackSettings(data,warehouse,location),label=localRackLabel(d);if(label){const svg=rackQrNode(label.qr);svg.style.cssText='display:block;width:120px;height:120px;max-width:100%;background:white';host.append(svg,el('div','6 碼識別碼：'+label.accessCode),el('small','本機測試標籤'));const view=el('button','查看／列印標籤','btn');view.type='button';view.onclick=()=>openRackLabelPreview();host.append(view);}else{host.append(el('div',d.rackAccessCode?'原識別碼：'+d.rackAccessCode+'；QR 尚未產生':'尚未產生 QR＋6 碼識別碼'));const generate=el('button',d.rackCode?'產生 QR＋6 碼標籤':'產生測試代碼與標籤','btn');generate.type='button';generate.onclick=openRackLabelIssue;host.append(generate);}}
 const rackLabelIssue=el('dialog');rackLabelIssue.id='rlIssueDialog';rackLabelIssue.setAttribute('aria-labelledby','rlIssueTitle');rackLabelIssue.innerHTML='<h2 id="rlIssueTitle">產生貨架測試標籤</h2><p id="rlIssueTarget"></p><p>沿用既有貨架代碼，產生並保存 QR 與 6 碼識別碼；尚無測試代碼時一併產生。現有物品、數量、單位與位置不變。</p><p>標籤僅供此瀏覽器本機測試，尚未接通平板領用或移轉。重印會沿用原碼。</p><p id="rlIssueError" role="alert"></p><div class="rl-actions"><button class="btn" id="rlIssueCancel" type="button">取消</button><button class="btn" id="rlIssueAccept" type="button">確認產生標籤</button></div>';document.body.append(rackLabelIssue);const rli=id=>rackLabelIssue.querySelector('#'+id);let rackLabelIssueTarget=null,rackLabelIssueBusy=false;
 function openRackLabelIssue(){try{const t=rackTarget;if(!settingsAuthorized()||!t||t.creating||ownerScope()!==t.scope||!rackDialog.open)throw Error('請先開啟現有貨架的設定。');if(localStorage.getItem(inventoryKey())!==t.raw)throw Error('資料已更新，請關閉後重新開啟。');const data=readInventory();if(rackDraftChanged(t,data))throw Error('請先儲存名稱／類型修改，或取消後重新開啟，再產生標籤。');rackQrNode('BOMB:RACK-LOCAL:00000000-0000-0000-0000-000000000000:1');rackLabelIssueTarget={...t,key:inventoryKey()};rli('rlIssueTarget').textContent=t.warehouse+'／'+t.location+'；貨架代碼：'+(rackSettings(data,t.warehouse,t.location).rackCode||'確認後產生本機測試代碼');rli('rlIssueError').textContent='';rackLabelIssue.showModal();rli('rlIssueCancel').focus();}catch(error){rk('rkError').textContent=error.message;}}
