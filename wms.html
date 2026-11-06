@@ -737,7 +737,7 @@ document.querySelector('.top>span').textContent=currentOperator.name+' · '+Work
  single('特殊物品分類');single('物品管理');
  section('識別標籤管理',['識別標籤管理','標籤與匯入']);
  section('進貨管理',['進貨管理','收貨與驗貨']);
- const purchaseButton=find('進貨管理');if(purchaseButton)purchaseButton.querySelector('span').textContent='進貨單據';
+ const purchaseButton=find('進貨管理');if(purchaseButton)purchaseButton.querySelector('span').textContent='進貨管理';
  single('申請與提領');single('退貨管理');
  section('入庫管理',['歸還與移轉']);
  single('報廢管理');section('維修管理',['維修管理','借出管理']);
@@ -928,13 +928,13 @@ document.body.classList.add('wms-unified-nav');
 nav.replaceChildren();
 const groups=[
  ['首頁','倉儲工作台'],
+ ['單據與任務',['我的任務','建立單據','我的單據']],
  ['入庫作業',['進貨管理','收貨與驗貨','歸還與移轉']],
  ['出庫作業',['申請與提領','退貨管理']],
  ['庫存管理',['庫存查詢',['專項物品',['備品管理','制服管理','無線電耳機管理','特殊物品分類']]]],
  ['識別標籤管理','識別標籤管理'],
  ['盤點作業','盤點作業'],
  ['倉儲架構設定',['位置與分類','物品分類管理','物品管理']],
- ['單據與任務',['我的任務','建立單據','我的單據']],
  ['其他作業',['維修管理']]
 ];
 function makeGroup(label,entries){
