@@ -1226,8 +1226,16 @@ if(back){
   countError.textContent = '';
   event.currentTarget.focus();
   countDialog.showModal();
+  suppliesNav?.classList.remove('active');
+  countMenu.classList.add('active');
+  countMenu.setAttribute('aria-current', 'page');
   countInputs[0].focus();
  }
+ countDialog.addEventListener('close', () => {
+  countMenu.classList.remove('active');
+  countMenu.removeAttribute('aria-current');
+  if (!panel.hidden && allowed('備品管理')) suppliesNav?.classList.add('active');
+ });
  countForm.querySelector('[data-count-cancel]').addEventListener('click', () => countDialog.close());
  function clearCountValidation() {
   const marked = countForm.querySelector('[aria-invalid="true"]');
